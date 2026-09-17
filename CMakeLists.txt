@@ -25,6 +25,7 @@ add_custom_target(shader-library DEPENDS ${METALLIB_OUT})
 find_library(FOUNDATION_LIB Foundation)
 find_library(METAL_LIB Metal)
 find_library(QUARTZCORE_LIB QuartzCore)
+find_library(APPKIT_LIB AppKit)
 
 add_executable(${PROJECT_NAME})
 
@@ -32,9 +33,12 @@ add_dependencies(${PROJECT_NAME} shader-library)
 
 target_sources(${PROJECT_NAME} PRIVATE src/main.cc src/metal_impl.cc)
 
-target_include_directories(${PROJECT_NAME} PRIVATE external/metal-cpp)
+target_include_directories(
+  ${PROJECT_NAME}
+  PRIVATE external/metal-cpp external/metal-cpp-extensions
+)
 
 target_link_libraries(
   ${PROJECT_NAME}
-  PRIVATE ${FOUNDATION_LIB} ${METAL_LIB} ${QUARTZCORE_LIB}
+  PRIVATE ${FOUNDATION_LIB} ${METAL_LIB} ${QUARTZCORE_LIB} ${APPKIT_LIB}
 )
