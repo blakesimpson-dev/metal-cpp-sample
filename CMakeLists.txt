@@ -11,7 +11,7 @@ find_library(QUARTZCORE_LIB QuartzCore)
 
 add_executable(${PROJECT_NAME})
 
-target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/metal_impl.cpp)
+target_sources(${PROJECT_NAME} PRIVATE src/main.cc src/metal_impl.cc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE external/metal-cpp)
 
