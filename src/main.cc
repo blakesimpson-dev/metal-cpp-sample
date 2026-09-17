@@ -1,5 +1,8 @@
+#include <simd/simd.h>
+
 #include <Metal/Metal.hpp>
 #include <cassert>
+#include <cstring>
 #include <iostream>
 
 constexpr const char* kShaderLibraryPath = "build/basic.metallib";
@@ -47,6 +50,38 @@ int main() {
 
   // ...
 
+  std::array positions{simd::float3{-0.675F, 0.675F, 0.0F},
+                       simd::float3{0.0F, -0.675F, 0.0F},
+                       simd::float3{+0.675F, 0.675F, 0.0F}};
+  // constexpr size_t vertex_count = std::size(positions);
+
+  std::array colors{simd::float3{1.0F, 0.0F, 0.0F},
+                    simd::float3{0.0F, 1.0F, 0.0F},
+                    simd::float3{0.0F, 0.0F, 1.0F}};
+
+  MTL::ResourceOptions storage_mode = device->hasUnifiedMemory()
+                                          ? MTL::ResourceStorageModeShared
+                                          : MTL::ResourceStorageModeManaged;
+
+  MTL::Buffer* positions_buffer =
+      device->newBuffer(sizeof(positions), storage_mode);
+  assert(positions_buffer != nullptr && "Failed to create positions buffer.");
+  memcpy(positions_buffer->contents(), positions.data(), sizeof(positions));
+
+  MTL::Buffer* colors_buffer = device->newBuffer(sizeof(colors), storage_mode);
+  assert(colors_buffer != nullptr && "Failed to create colors buffer.");
+  memcpy(colors_buffer->contents(), colors.data(), sizeof(colors));
+
+  if (!device->hasUnifiedMemory()) {
+    positions_buffer->didModifyRange(
+        NS::Range::Make(0, positions_buffer->length()));
+    colors_buffer->didModifyRange(NS::Range::Make(0, colors_buffer->length()));
+  }
+
+  // ...
+
+  colors_buffer->release();
+  positions_buffer->release();
   pipeline_state->release();
   pipeline_descriptor->release();
   fragment_main->release();
