@@ -24,6 +24,7 @@ add_custom_target(shader-library DEPENDS ${METALLIB_OUT})
 
 find_library(FOUNDATION_LIB Foundation)
 find_library(METAL_LIB Metal)
+find_library(METALKIT_LIB MetalKit)
 find_library(QUARTZCORE_LIB QuartzCore)
 find_library(APPKIT_LIB AppKit)
 
@@ -40,5 +41,10 @@ target_include_directories(
 
 target_link_libraries(
   ${PROJECT_NAME}
-  PRIVATE ${FOUNDATION_LIB} ${METAL_LIB} ${QUARTZCORE_LIB} ${APPKIT_LIB}
+  PRIVATE
+    ${FOUNDATION_LIB}
+    ${METAL_LIB}
+    ${METALKIT_LIB}
+    ${QUARTZCORE_LIB}
+    ${APPKIT_LIB}
 )
