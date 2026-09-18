@@ -139,4 +139,25 @@ void Renderer::Draw(MTK::View* view) {
 }
 #pragma endregion Renderer }
 
+#pragma region RendererViewDelegate {
+class RendererViewDelegate : public MTK::ViewDelegate {
+ public:
+  explicit RendererViewDelegate(MTL::Device* device);
+  ~RendererViewDelegate() override;
+  void drawInMTKView(MTK::View* view) override;
+
+ private:
+  Renderer* renderer_;
+};
+
+RendererViewDelegate::RendererViewDelegate(MTL::Device* device)
+    : renderer_(new Renderer(device)) {}
+
+RendererViewDelegate::~RendererViewDelegate() { delete renderer_; }
+
+void RendererViewDelegate::drawInMTKView(MTK::View* view) {
+  renderer_->Draw(view);
+}
+#pragma endregion RendererViewDelegate }
+
 int main() { return 0; }
