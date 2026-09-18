@@ -32,7 +32,15 @@ add_executable(${PROJECT_NAME})
 
 add_dependencies(${PROJECT_NAME} shader-library)
 
-target_sources(${PROJECT_NAME} PRIVATE src/main.cc src/metal_impl.cc)
+target_sources(
+  ${PROJECT_NAME}
+  PRIVATE
+    src/main.cc
+    src/renderer.cc
+    src/application_delegate.cc
+    src/view_delegate.cc
+    src/metal_impl.cc
+)
 
 target_include_directories(
   ${PROJECT_NAME}
