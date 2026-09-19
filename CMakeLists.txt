@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.26)
 
 project(metal-cpp-sample)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 file(GLOB shader_sources "${CMAKE_SOURCE_DIR}/shaders/*.metal")
 
@@ -26,17 +27,28 @@ add_custom_command(
   DEPENDS ${air_out}
 )
 
-add_custom_target(shaderlib DEPENDS ${metallib_out})
+add_custom_target(shaders DEPENDS ${metallib_out})
+add_custom_target(
+  assets
+  COMMAND
+    ${CMAKE_COMMAND} -E copy_directory_if_different ${CMAKE_SOURCE_DIR}/assets
+    ${CMAKE_BINARY_DIR}/assets
+)
 
-find_library(APPKIT_LIB AppKit)
-find_library(FOUNDATION_LIB Foundation)
-find_library(METAL_LIB Metal)
-find_library(METALKIT_LIB MetalKit)
-find_library(QUARTZCORE_LIB QuartzCore)
+find_library(APPKIT_LIB AppKit REQUIRED)
+find_library(FOUNDATION_LIB Foundation REQUIRED)
+find_library(METAL_LIB Metal REQUIRED)
+find_library(METALKIT_LIB MetalKit REQUIRED)
+find_library(QUARTZCORE_LIB QuartzCore REQUIRED)
+
+add_subdirectory(external/simdjson EXCLUDE_FROM_ALL)
+
+set(FASTGLTF_COMPILE_AS_CPP20 ON CACHE BOOL "" FORCE)
+add_subdirectory(external/fastgltf EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME})
 
-add_dependencies(${PROJECT_NAME} shaderlib)
+add_dependencies(${PROJECT_NAME} assets shaders)
 
 target_sources(
   ${PROJECT_NAME}
@@ -59,6 +71,7 @@ target_link_libraries(
   ${PROJECT_NAME}
   PRIVATE
     ${APPKIT_LIB}
+    fastgltf::fastgltf
     ${FOUNDATION_LIB}
     ${METAL_LIB}
     ${METALKIT_LIB}
