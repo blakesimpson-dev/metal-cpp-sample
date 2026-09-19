@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Metal/Metal.hpp>
+#include <cstddef>
 
 #include "scene.h"
 

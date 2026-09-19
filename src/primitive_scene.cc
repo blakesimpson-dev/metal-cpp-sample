@@ -2,8 +2,11 @@
 
 #include <simd/simd.h>
 
+#include <array>
 #include <cassert>
 #include <cstring>
+#include <iterator>
+#include <string>
 
 #include "executable_path.h"
 #include "metal_renderer.h"
@@ -24,7 +27,7 @@ PrimitiveScene::~PrimitiveScene() {
 void PrimitiveScene::Load(MTL::Device* device) {
   NS::Error* shader_library_error = nullptr;
   std::string shader_library_path =
-      (ExecutableDir() / "shaders.metallib").string();
+      (ExecutableDirectoryPath() / "shaders.metallib").string();
   NS::URL* shader_library_url = NS::URL::fileURLWithPath(NS::String::string(
       shader_library_path.c_str(), NS::StringEncoding::UTF8StringEncoding));
 

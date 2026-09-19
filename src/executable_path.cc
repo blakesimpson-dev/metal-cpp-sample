@@ -2,7 +2,11 @@
 
 #include <mach-o/dyld.h>
 
-std::filesystem::path ExecutableDir() {
+#include <cstdint>
+#include <filesystem>
+#include <vector>
+
+std::filesystem::path ExecutableDirectoryPath() {
   uint32_t size = 0;
   _NSGetExecutablePath(nullptr, &size);
   std::vector<char> buffer(size);

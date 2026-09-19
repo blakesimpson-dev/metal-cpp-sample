@@ -2,5 +2,10 @@ CompileFlags:
   CompilationDatabase: build
 
 Diagnostics:
-  UnusedIncludes: None
-  MissingIncludes: None
+  UnusedIncludes: Strict
+  MissingIncludes: Strict
+  Includes:
+    IgnoreHeader:
+      - "external/metal-cpp/.*"
+      - "external/metal-cpp-extensions/.*"
+      - "simd/.*"

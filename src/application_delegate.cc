@@ -1,5 +1,7 @@
 #include "application_delegate.h"
 
+#include <CoreFoundation/CFCGTypes.h>
+
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>

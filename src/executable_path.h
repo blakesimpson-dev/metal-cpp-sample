@@ -2,4 +2,4 @@
 
 #include <filesystem>
 
-std::filesystem::path ExecutableDir();
+std::filesystem::path ExecutableDirectoryPath();
