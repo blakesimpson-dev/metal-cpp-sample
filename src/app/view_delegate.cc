@@ -1,6 +1,6 @@
-#include "view_delegate.h"
+#include "app/view_delegate.h"
 
-#include "metal_renderer.h"
+#include "renderer/metal_renderer.h"
 
 ViewDelegate::ViewDelegate(MTL::Device* device, MTK::View* view, Scene* scene)
     : renderer_(new MetalRenderer(device, view, scene)) {}

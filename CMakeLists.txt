@@ -57,19 +57,19 @@ add_dependencies(${PROJECT_NAME} assets shaders)
 target_sources(
   ${PROJECT_NAME}
   PRIVATE
-    src/application_delegate.cc
-    src/executable_path.cc
-    src/gltf_scene.cc
+    src/app/application_delegate.cc
+    src/app/view_delegate.cc
     src/main.cc
-    src/metal_impl.cc
-    src/metal_renderer.cc
-    src/minimal_scene.cc
-    src/view_delegate.cc
+    src/platform/executable_path.cc
+    src/renderer/metal_impl.cc
+    src/renderer/metal_renderer.cc
+    src/scenes/gltf_scene.cc
+    src/scenes/minimal_scene.cc
 )
 
 target_include_directories(
   ${PROJECT_NAME}
-  PRIVATE external/metal-cpp external/metal-cpp-extensions
+  PRIVATE external/metal-cpp external/metal-cpp-extensions src
 )
 
 target_link_libraries(

@@ -1,4 +1,4 @@
-#include "gltf_scene.h"
+#include "scenes/gltf_scene.h"
 
 #include <algorithm>
 #include <cassert>
@@ -15,7 +15,7 @@
 #include <string_view>
 #include <vector>
 
-#include "executable_path.h"
+#include "platform/executable_path.h"
 
 namespace {
 constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";

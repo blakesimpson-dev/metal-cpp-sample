@@ -1,4 +1,4 @@
-#include "metal_renderer.h"
+#include "renderer/metal_renderer.h"
 
 #include <simd/simd.h>
 
@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstring>
 
-#include "scene.h"
+#include "scenes/scene.h"
 
 namespace {
 constexpr const char* kVertexShaderFunctionName = "VertexMain";

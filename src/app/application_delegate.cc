@@ -1,4 +1,4 @@
-#include "application_delegate.h"
+#include "app/application_delegate.h"
 
 #include <CoreFoundation/CFCGTypes.h>
 
@@ -7,8 +7,8 @@
 #include <cassert>
 #include <iostream>
 
-#include "metal_renderer.h"
-#include "view_delegate.h"
+#include "app/view_delegate.h"
+#include "renderer/metal_renderer.h"
 
 namespace {
 constexpr const char* kWindowTitle = "Metal-cpp Sample";

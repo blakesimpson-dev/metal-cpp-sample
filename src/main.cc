@@ -2,9 +2,9 @@
 #include <cassert>
 #include <string_view>
 
-#include "application_delegate.h"
-#include "gltf_scene.h"
-#include "minimal_scene.h"
+#include "app/application_delegate.h"
+#include "scenes/gltf_scene.h"
+#include "scenes/minimal_scene.h"
 
 namespace {
 constexpr std::string_view kSceneFlag = "--scene=";

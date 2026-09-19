@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "scene.h"
+#include "scenes/scene.h"
 
 class GltfScene : public Scene {
  public:

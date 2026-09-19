@@ -3,7 +3,7 @@
 #include <Metal/Metal.hpp>
 #include <cstddef>
 
-#include "renderer.h"
+#include "renderer/renderer.h"
 
 namespace MTK {  // NOLINT(readability-identifier-naming)
 class View;

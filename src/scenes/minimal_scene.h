@@ -3,7 +3,7 @@
 #include <Metal/Metal.hpp>
 #include <cstddef>
 
-#include "scene.h"
+#include "scenes/scene.h"
 
 class MinimalScene : public Scene {
  public:
