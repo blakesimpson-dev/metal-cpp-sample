@@ -1,0 +1,31 @@
+[
+  {
+    "label": "CMake: Configure",
+    "command": "cmake -S . -B build -G Ninja",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "shell": "system",
+    "reveal": "always",
+  },
+  {
+    "label": "CMake: Build",
+    "command": "cmake --build build",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "shell": "system",
+    "reveal": "always",
+  },
+  {
+    "label": "Run: Metal-cpp sample",
+    "command": "./build/metal-cpp-sample",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "shell": "system",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+  },
+  {
+    "label": "Build and Run: Metal-cpp sample",
+    "command": "cmake --build build && ./build/metal-cpp-sample",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "shell": "system",
+    "reveal": "always",
+  },
+]
