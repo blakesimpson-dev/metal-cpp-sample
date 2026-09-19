@@ -1,9 +1,12 @@
 [submodule "external/metal-cpp"]
 	path = external/metal-cpp
 	url = https://github.com/apple/metal-cpp
+	shallow = true
 [submodule "external/simdjson"]
 	path = external/simdjson
 	url = https://github.com/simdjson/simdjson
+	shallow = true
 [submodule "external/fastgltf"]
 	path = external/fastgltf
 	url = https://github.com/spnda/fastgltf
+	shallow = true
