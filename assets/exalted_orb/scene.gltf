@@ -1,0 +1,176 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 30310,
+      "max": [
+        9.865670204162598,
+        9.930709838867188,
+        9.63875961303711
+      ],
+      "min": [
+        -6.598649978637695,
+        -7.487070083618164,
+        -8.598529815673828
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 363720,
+      "componentType": 5126,
+      "count": 30310,
+      "max": [
+        0.9999120235443115,
+        0.9999682307243347,
+        0.9999170303344727
+      ],
+      "min": [
+        -0.9999691843986511,
+        -0.9999210834503174,
+        -0.9999948143959045
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 181704,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "justingulenchyn (https://sketchfab.com/justingulenchyn)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/exalted-orb-8729a148401b4cda8143f61c4c56c3a9",
+      "title": "Exalted Orb"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 726816,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 727440,
+      "byteOffset": 726816,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1454256,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Scene_-_Root",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.2438378681299503,
+          0.18670504234589577,
+          0.04247146797475845,
+          1.0
+        ],
+        "metallicFactor": 0.92,
+        "roughnessFactor": 0.33
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Exalted_Orb",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "Root"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.37846,
+        -0.3498300000000001,
+        -0.55876,
+        1.0
+      ],
+      "name": "Exalted_Orb"
+    },
+    {
+      "mesh": 0,
+      "name": "Exalted_Orb"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
