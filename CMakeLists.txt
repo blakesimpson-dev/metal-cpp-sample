@@ -46,6 +46,7 @@ target_sources(
     src/main.cc
     src/metal_impl.cc
     src/metal_renderer.cc
+    src/primitive_scene.cc
     src/view_delegate.cc
 )
 

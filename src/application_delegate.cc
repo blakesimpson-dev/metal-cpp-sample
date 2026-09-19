@@ -12,6 +12,8 @@ namespace {
 constexpr const char* kWindowTitle = "Metal-cpp Sample";
 }
 
+ApplicationDelegate::ApplicationDelegate(Scene* scene) : scene_(scene) {}
+
 ApplicationDelegate::~ApplicationDelegate() {
   view_->release();
   window_->release();
@@ -47,7 +49,7 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setClearColor(MTL::ClearColor::Make(0.0, 0.0, 0.0, 1.0));
 
-  view_delegate_ = new ViewDelegate(device_, view_);
+  view_delegate_ = new ViewDelegate(device_, view_, scene_);
   view_->setDelegate(view_delegate_);
 
   window_->setContentView(view_);
