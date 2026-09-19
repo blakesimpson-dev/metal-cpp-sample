@@ -5,12 +5,12 @@
 
 #include "scene.h"
 
-class PrimitiveScene : public Scene {
+class MinimalScene : public Scene {
  public:
-  PrimitiveScene(const PrimitiveScene&) = delete;
-  PrimitiveScene& operator=(const PrimitiveScene&) = delete;
-  PrimitiveScene() = default;
-  ~PrimitiveScene() override;
+  MinimalScene(const MinimalScene&) = delete;
+  MinimalScene& operator=(const MinimalScene&) = delete;
+  MinimalScene() = default;
+  ~MinimalScene() override;
   void Load(MTL::Device* device) override;
   void Update(float delta) override;
   void Draw(MTL::RenderCommandEncoder* command_encoder) override;

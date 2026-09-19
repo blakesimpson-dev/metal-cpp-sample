@@ -1,4 +1,4 @@
-#include "primitive_scene.h"
+#include "minimal_scene.h"
 
 #include <simd/simd.h>
 
@@ -18,13 +18,13 @@ constexpr NS::UInteger kPositionsBufferIndex = 0;
 constexpr NS::UInteger kColorsBufferIndex = 1;
 }  // namespace
 
-PrimitiveScene::~PrimitiveScene() {
+MinimalScene::~MinimalScene() {
   colors_buffer_->release();
   positions_buffer_->release();
   pipeline_state_->release();
 }
 
-void PrimitiveScene::Load(MTL::Device* device) {
+void MinimalScene::Load(MTL::Device* device) {
   NS::Error* shader_library_error = nullptr;
   std::string shader_library_path =
       (ExecutableDirectoryPath() / "shaders.metallib").string();
@@ -68,7 +68,7 @@ void PrimitiveScene::Load(MTL::Device* device) {
                     simd::float3{0.0F, 1.0F, 0.0F},
                     simd::float3{0.0F, 0.0F, 1.0F}};
 
-  // NOTE: ResourceStorageModeManaged path is untested (I don't have access to
+  // ! ResourceStorageModeManaged path is untested (I don't have access to
   // a Mac with dedicated graphics..!)
   MTL::ResourceOptions storage_mode = device->hasUnifiedMemory()
                                           ? MTL::ResourceStorageModeShared
@@ -95,9 +95,9 @@ void PrimitiveScene::Load(MTL::Device* device) {
   shader_library->release();
 }
 
-void PrimitiveScene::Update(float delta) {}
+void MinimalScene::Update(float delta) {}
 
-void PrimitiveScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
+void MinimalScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setVertexBuffer(positions_buffer_, 0, kPositionsBufferIndex);
   command_encoder->setVertexBuffer(colors_buffer_, 0, kColorsBufferIndex);

@@ -59,10 +59,11 @@ target_sources(
   PRIVATE
     src/application_delegate.cc
     src/executable_path.cc
+    src/gltf_scene.cc
     src/main.cc
     src/metal_impl.cc
     src/metal_renderer.cc
-    src/primitive_scene.cc
+    src/minimal_scene.cc
     src/view_delegate.cc
 )
 
