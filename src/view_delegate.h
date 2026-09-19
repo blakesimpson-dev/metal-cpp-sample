@@ -2,16 +2,16 @@
 
 #include <MetalKit/MetalKit.hpp>
 
-class Renderer;
+class MetalRenderer;
 
 class ViewDelegate : public MTK::ViewDelegate {
  public:
   ViewDelegate(const ViewDelegate&) = delete;
   ViewDelegate& operator=(const ViewDelegate&) = delete;
-  explicit ViewDelegate(MTL::Device* device);
+  ViewDelegate(MTL::Device* device, MTK::View* view);
   ~ViewDelegate() override;
   void drawInMTKView(MTK::View* view) override;
 
  private:
-  Renderer* renderer_;
+  MetalRenderer* renderer_;
 };

@@ -5,7 +5,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "renderer.h"
+#include "metal_renderer.h"
 #include "view_delegate.h"
 
 namespace {
@@ -44,10 +44,10 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   view_ = MTK::View::alloc()->init(content_rect, device_);
   assert(view_ != nullptr && "Failed to create view.");
 
-  view_->setColorPixelFormat(Renderer::kColorPixelFormat);
+  view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setClearColor(MTL::ClearColor::Make(0.0, 0.0, 0.0, 1.0));
 
-  view_delegate_ = new ViewDelegate(device_);
+  view_delegate_ = new ViewDelegate(device_, view_);
   view_->setDelegate(view_delegate_);
 
   window_->setContentView(view_);

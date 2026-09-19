@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include "metal_renderer.h"
 
 #include <simd/simd.h>
 
@@ -6,21 +6,25 @@
 #include <cassert>
 #include <cstring>
 
+#include "executable_path.h"
+
 namespace {
-constexpr const char* kShaderLibraryPath = "build/basic.metallib";
 constexpr const char* kVertexShaderFunctionName = "VertexMain";
 constexpr const char* kFragmentShaderFunctionName = "FragmentMain";
 constexpr NS::UInteger kPositionsBufferIndex = 0;
 constexpr NS::UInteger kColorsBufferIndex = 1;
 }  // namespace
 
-Renderer::Renderer(MTL::Device* device) : device_(device->retain()) {
+MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view)
+    : device_(device->retain()), view_(view) {
   command_queue_ = device_->newCommandQueue();
   assert(command_queue_ != nullptr && "Failed to create command queue.");
 
   NS::Error* shader_library_error = nullptr;
+  std::string shader_library_path =
+      (ExecutableDir() / "shaders.metallib").string();
   NS::URL* shader_library_url = NS::URL::fileURLWithPath(NS::String::string(
-      kShaderLibraryPath, NS::StringEncoding::UTF8StringEncoding));
+      shader_library_path.c_str(), NS::StringEncoding::UTF8StringEncoding));
 
   MTL::Library* shader_library =
       device_->newLibrary(shader_library_url, &shader_library_error);
@@ -86,7 +90,7 @@ Renderer::Renderer(MTL::Device* device) : device_(device->retain()) {
   shader_library->release();
 }
 
-Renderer::~Renderer() {
+MetalRenderer::~MetalRenderer() {
   colors_buffer_->release();
   positions_buffer_->release();
   pipeline_state_->release();
@@ -94,11 +98,11 @@ Renderer::~Renderer() {
   device_->release();
 }
 
-void Renderer::Draw(MTK::View* view) {
+void MetalRenderer::Draw() {
   NS::AutoreleasePool* pool = NS::AutoreleasePool::alloc()->init();
 
   MTL::CommandBuffer* command_buffer = command_queue_->commandBuffer();
-  MTL::RenderPassDescriptor* render_pass = view->currentRenderPassDescriptor();
+  MTL::RenderPassDescriptor* render_pass = view_->currentRenderPassDescriptor();
   MTL::RenderCommandEncoder* command_encoder =
       command_buffer->renderCommandEncoder(render_pass);
 
@@ -110,7 +114,7 @@ void Renderer::Draw(MTK::View* view) {
                                   static_cast<NS::UInteger>(vertex_count_));
 
   command_encoder->endEncoding();
-  command_buffer->presentDrawable(view->currentDrawable());
+  command_buffer->presentDrawable(view_->currentDrawable());
   command_buffer->commit();
 
   pool->release();
