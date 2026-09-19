@@ -10,7 +10,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
-file(GLOB shader_sources "${CMAKE_SOURCE_DIR}/shaders/*.metal")
+file(GLOB shader_sources "${CMAKE_SOURCE_DIR}/src/shaders/*.metal")
 
 set(air_out)
 foreach(shader_source ${shader_sources})
@@ -19,7 +19,7 @@ foreach(shader_source ${shader_sources})
   add_custom_command(
     OUTPUT ${out}
     COMMAND xcrun -sdk macosx metal -c ${shader_source} -o ${out}
-    DEPENDS ${shader_source}
+    DEPENDS ${shader_source} ${CMAKE_SOURCE_DIR}/src/shaders/shader_types.h
   )
   list(APPEND air_out ${out})
 endforeach()
