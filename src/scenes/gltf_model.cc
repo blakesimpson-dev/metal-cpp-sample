@@ -20,6 +20,13 @@ struct MeshInstance {
   fastgltf::math::fmat4x4 world_matrix;
 };
 
+simd::float3 TransformPoint(const simd::float4x4& matrix,
+                            const simd::float3& point) {
+  const simd::float4 result =
+      simd_mul(matrix, simd::float4{point.x, point.y, point.z, 1.0F});
+  return simd::float3{result.x, result.y, result.z};
+}
+
 MeshInstance FindMeshInstance(fastgltf::Asset& asset) {
   assert(!asset.scenes.empty() && "Scene lookup failed: Model has no scenes.");
 
@@ -97,33 +104,26 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
                      const simd::float4x4& model_matrix) {
   assert(!positions.empty() && "Bounds calculation failed: No position data.");
 
-  const auto to_world = [&](const simd::float3& position) {
-    const simd::float4 world = simd_mul(
-        model_matrix, simd::float4{position.x, position.y, position.z, 1.0F});
-    return simd::float3{world.x, world.y, world.z};
-  };
-
   simd::float3 min_corner{std::numeric_limits<float>::max(),
                           std::numeric_limits<float>::max(),
                           std::numeric_limits<float>::max()};
 
-  // NOTE: lowest(), not min()! min() is the smallest positive float..
   simd::float3 max_corner{std::numeric_limits<float>::lowest(),
                           std::numeric_limits<float>::lowest(),
                           std::numeric_limits<float>::lowest()};
 
-  for (const simd::float3& pos : positions) {
-    const simd::float3 world_position = to_world(pos);
+  for (const simd::float3& position : positions) {
+    const simd::float3 world_position = TransformPoint(model_matrix, position);
 
     min_corner = simd_min(min_corner, world_position);
     max_corner = simd_max(max_corner, world_position);
   }
 
   const simd::float3 center = (min_corner + max_corner) * 0.5F;
-
   float radius = 0.0F;
   for (const simd::float3& position : positions) {
-    radius = std::max(radius, simd_length(to_world(position) - center));
+    radius = std::max(
+        radius, simd_length(TransformPoint(model_matrix, position) - center));
   }
 
   return Bounds{.center = center, .radius = radius};
@@ -141,15 +141,18 @@ const fastgltf::PBRData& ReadPbrData(const fastgltf::Asset& asset,
 }  // namespace
 
 GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
-  auto asset_load_result = fastgltf::GltfDataBuffer::FromPath(model_file_path);
+  fastgltf::Expected<fastgltf::GltfDataBuffer> asset_load_result =
+      fastgltf::GltfDataBuffer::FromPath(model_file_path);
+
   assert(asset_load_result.error() == fastgltf::Error::None &&
          "Model read failed: Could not load the file.");
   fastgltf::GltfDataBuffer& asset_data = asset_load_result.get();
 
   fastgltf::Parser gltf_parser;
-  auto asset_parse_result =
+  fastgltf::Expected<fastgltf::Asset> asset_parse_result =
       gltf_parser.loadGltf(asset_data, model_file_path.parent_path(),
                            fastgltf::Options::LoadExternalBuffers);
+
   assert(asset_parse_result.error() == fastgltf::Error::None &&
          "Model parse failed: Invalid glTF or missing buffer.");
   fastgltf::Asset& asset = asset_parse_result.get();

@@ -1,12 +1,10 @@
 #include "renderer/metal_renderer.h"
 
 #include <CoreFoundation/CFCGTypes.h>
-#include <simd/simd.h>
 
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>
 #include <chrono>
-#include <cstring>
 
 #include "scenes/scene.h"
 
@@ -15,7 +13,8 @@ MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
       command_queue_(device->newCommandQueue()),
       view_(view),
       scene_(scene) {
-  assert(command_queue_ != nullptr && "Failed to create command queue.");
+  assert(command_queue_ != nullptr &&
+         "Command queue creation failed: Could not initialize.");
   scene_->Load(device_);
 
   scene_->ConfigureCamera(camera_);

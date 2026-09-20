@@ -2,7 +2,7 @@
 
 #include <simd/simd.h>
 
-enum BufferIndex {  // NOLINT(performance-enum-size)
+enum BufferIndex : unsigned char {
   kBufferIndexPositions = 0,
   kBufferIndexColors = 1,
   kBufferIndexUniforms = 2,

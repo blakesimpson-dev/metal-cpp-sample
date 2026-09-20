@@ -6,7 +6,8 @@
 #include "renderer/camera.h"
 #include "renderer/renderer.h"
 
-namespace MTK {  // NOLINT(readability-identifier-naming)
+// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
+namespace MTK {
 class View;
 }
 

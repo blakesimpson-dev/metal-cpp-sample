@@ -94,8 +94,6 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       model_.model_matrix;
 
   const Uniforms uniforms{
-      // NOTE: Order matters! mvp must always be evaluated in the following
-      // order (reverse): projection * view * model
       .mvp =
           camera.ProjectionMatrix() * camera.ViewMatrix() * model_world_matrix,
       .world_matrix = model_world_matrix,

@@ -2,11 +2,13 @@
 
 #include <AppKit/AppKit.hpp>
 
-namespace MTL {  // NOLINT(readability-identifier-naming)
+// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
+namespace MTL {
 class Device;
 }
 
-namespace MTK {  // NOLINT(readability-identifier-naming)
+// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
+namespace MTK {
 class View;
 }
 

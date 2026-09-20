@@ -3,6 +3,7 @@
 #include <Metal/Metal.hpp>
 #include <cassert>
 #include <cstddef>
+#include <iostream>
 #include <string>
 
 #include "platform/executable_path.h"
@@ -19,6 +20,10 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
 
   MTL::Library* shader_library =
       device->newLibrary(shader_library_url, &shader_library_error);
+  if (shader_library == nullptr) {
+    std::cerr << shader_library_error->localizedDescription()->utf8String()
+              << "\n";
+  }
   assert(
       shader_library != nullptr &&
       "Shader library load failed: Could not create it from shaders.metallib.");
@@ -47,6 +52,10 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
   NS::Error* pipeline_state_error = nullptr;
   MTL::RenderPipelineState* pipeline_state = device->newRenderPipelineState(
       pipeline_descriptor, &pipeline_state_error);
+  if (pipeline_state == nullptr) {
+    std::cerr << pipeline_state_error->localizedDescription()->utf8String()
+              << "\n";
+  }
   assert(pipeline_state != nullptr &&
          "Pipeline state creation failed: Metal rejected the descriptor.");
 
@@ -60,8 +69,7 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
 
 MTL::Buffer* CreateBuffer(MTL::Device* device, const void* data,
                           std::size_t length) {
-  // NOTE: ResourceStorageModeManaged path is untested (I don't have access to
-  // a Mac with dedicated graphics..!)
+  // NOTE: ResourceStorageModeManaged path is untested
   const MTL::ResourceOptions storage_mode =
       device->hasUnifiedMemory() ? MTL::ResourceStorageModeShared
                                  : MTL::ResourceStorageModeManaged;
