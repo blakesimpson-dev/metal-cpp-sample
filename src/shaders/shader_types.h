@@ -27,5 +27,4 @@ struct FragmentUniforms {
   float specular_intensity;
   float specular_exponent;
   float metallic_factor;
-  float roughness_factor;
 };

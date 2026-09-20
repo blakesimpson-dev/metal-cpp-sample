@@ -110,7 +110,6 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       .specular_intensity = kSpecularIntensity,
       .specular_exponent = kSpecularExponent,
       .metallic_factor = model_.metallic_factor,
-      .roughness_factor = model_.roughness_factor,
   };
 
   command_encoder->setRenderPipelineState(pipeline_state_);

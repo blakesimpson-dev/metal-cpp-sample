@@ -192,7 +192,6 @@ GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
   };
 
   model.metallic_factor = pbr_data.metallicFactor;
-  model.roughness_factor = pbr_data.roughnessFactor;
 
   return model;
 }

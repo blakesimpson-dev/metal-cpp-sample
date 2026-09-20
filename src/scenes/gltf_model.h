@@ -14,7 +14,6 @@ struct GltfModel {
   simd::float3 bounds_center;
   simd::float4 base_color;
   float metallic_factor;
-  float roughness_factor;
   float bounds_radius;
 };
 
