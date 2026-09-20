@@ -21,6 +21,9 @@ constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
 constexpr float kRotationSpeed = 0.25F;
 const simd::float3 kWorldUp{0.0F, 1.0F, 0.0F};
+const simd::float3 kLightDirection{
+    simd::normalize(simd::float3{0.5F, 1.0F, 1.0F})};
+const float kAmbientIntensity = 0.175F;
 }  // namespace
 
 GltfScene::~GltfScene() {
@@ -49,11 +52,12 @@ void GltfScene::Load(MTL::Device* device) {
   const simd::float3 eye_position =
       model_.bounds_center + simd::float3{0.0F, 0.0F, fit_distance};
 
-  view_matrix_ = UpdateViewMatrix(eye_position, model_.bounds_center, kWorldUp);
-  projection_matrix_ =
-      UpdateProjectionMatrix(kFovYRadians, ApplicationDelegate::kAspectRatio,
-                             fit_distance - (2 * model_.bounds_radius),
-                             fit_distance + (2 * model_.bounds_radius));
+  view_matrix_ =
+      DirectedViewMatrix(eye_position, model_.bounds_center, kWorldUp);
+  projection_matrix_ = PerspectiveProjectionMatrix(
+      kFovYRadians, ApplicationDelegate::kAspectRatio,
+      fit_distance - (2 * model_.bounds_radius),
+      fit_distance + (2 * model_.bounds_radius));
 
   pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
                                               kFragmentShaderFunctionName);
@@ -78,27 +82,44 @@ void GltfScene::Update(float delta) {
 
 void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
   const simd::float4x4 from_origin_matrix =
-      UpdateTranslationMatrix(model_.bounds_center);
+      TranslationMatrix(model_.bounds_center);
   const simd::float4x4 to_origin_matrix =
-      UpdateTranslationMatrix(-model_.bounds_center);
+      TranslationMatrix(-model_.bounds_center);
 
-  const simd::float4x4 rotation_delta_matrix =
-      from_origin_matrix *
-      (UpdateXAxisRotationMatrix(rotation_angle_) *
-       UpdateYAxisRotationMatrix(rotation_angle_)) *
-      to_origin_matrix;
+  const simd::float4x4 delta_rotation_matrix =
+      (XRotationMatrix(rotation_angle_ * 0.5F) *
+       YRotationMatrix(rotation_angle_) *
+       ZRotationMatrix(rotation_angle_ * 0.125F));
 
-  const Uniforms uniforms{.mvp = projection_matrix_ * view_matrix_ *
-                                 rotation_delta_matrix};
+  const simd::float4x4 mvp_model_matrix =
+      from_origin_matrix * delta_rotation_matrix * to_origin_matrix;
+
+  const Uniforms uniforms{
+      // NOTE: Order matters! mvp must always be evaluated in the following
+      // order (reverse): projection * view * model
+      .mvp = projection_matrix_ * view_matrix_ * mvp_model_matrix,
+      .normal_matrix = NormalMatrix(mvp_model_matrix)};
+
+  const FragmentUniforms fragment_uniforms{
+      .base_color = model_.base_color,
+      .light_direction = kLightDirection,
+      .ambient_intensity = kAmbientIntensity,
+  };
 
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setDepthStencilState(depth_stencil_state_);
   command_encoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
   command_encoder->setCullMode(MTL::CullModeNone);
+
   command_encoder->setVertexBuffer(positions_buffer_, 0, kBufferIndexPositions);
   command_encoder->setVertexBuffer(normals_buffer_, 0, kBufferIndexNormals);
+
   command_encoder->setVertexBytes(&uniforms, sizeof(uniforms),
                                   kBufferIndexUniforms);
+  command_encoder->setFragmentBytes(&fragment_uniforms,
+                                    sizeof(fragment_uniforms),
+                                    kBufferIndexFragmentUniforms);
+
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,
       static_cast<NS::UInteger>(model_.indices.size()), MTL::IndexTypeUInt32,

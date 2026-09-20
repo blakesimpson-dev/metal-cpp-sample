@@ -134,47 +134,66 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
 
   return Bounds{.center = center, .radius = radius};
 }
+
+simd::float4 ReadBaseColor(const fastgltf::Asset& asset,
+                           const fastgltf::Primitive& primitive) {
+  assert(primitive.materialIndex.has_value() &&
+         "Read base color failed: Primitive has no material.");
+  assert(*primitive.materialIndex < asset.materials.size() &&
+         "Read base color failed: Material index out of range.");
+
+  const fastgltf::math::nvec4 base_color_factor =
+      asset.materials[*primitive.materialIndex].pbrData.baseColorFactor;
+
+  return simd::float4{
+      base_color_factor[0],
+      base_color_factor[1],
+      base_color_factor[2],
+      base_color_factor[3],
+  };
+}
 }  // namespace
 
 GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
-  auto model_load_result = fastgltf::GltfDataBuffer::FromPath(model_file_path);
-  assert(model_load_result.error() == fastgltf::Error::None &&
+  auto asset_load_result = fastgltf::GltfDataBuffer::FromPath(model_file_path);
+  assert(asset_load_result.error() == fastgltf::Error::None &&
          "Model read failed: Could not load the file.");
-  fastgltf::GltfDataBuffer& model_data = model_load_result.get();
+  fastgltf::GltfDataBuffer& asset_data = asset_load_result.get();
 
-  fastgltf::Parser parser;
-  auto model_parse_result =
-      parser.loadGltf(model_data, model_file_path.parent_path(),
-                      fastgltf::Options::LoadExternalBuffers);
-  assert(model_parse_result.error() == fastgltf::Error::None &&
+  fastgltf::Parser gltf_parser;
+  auto asset_parse_result =
+      gltf_parser.loadGltf(asset_data, model_file_path.parent_path(),
+                           fastgltf::Options::LoadExternalBuffers);
+  assert(asset_parse_result.error() == fastgltf::Error::None &&
          "Model parse failed: Invalid glTF or missing buffer.");
-  fastgltf::Asset& model_asset = model_parse_result.get();
+  fastgltf::Asset& asset = asset_parse_result.get();
 
-  const MeshInstance mesh_instance = FindMeshInstance(model_asset);
+  const MeshInstance mesh_instance = FindMeshInstance(asset);
 
   const std::size_t mesh_index = mesh_instance.mesh_index;
-  assert(mesh_index < model_asset.meshes.size() &&
+  assert(mesh_index < asset.meshes.size() &&
          "Mesh lookup failed: Mesh index out of range.");
-  assert(model_asset.meshes[mesh_index].primitives.size() == 1 &&
+  assert(asset.meshes[mesh_index].primitives.size() == 1 &&
          "Primitive lookup failed: Only one primitive per mesh is supported.");
 
-  const fastgltf::Primitive& primitive =
-      model_asset.meshes[mesh_index].primitives[0];
+  const fastgltf::Primitive& primitive = asset.meshes[mesh_index].primitives[0];
   assert(primitive.type == fastgltf::PrimitiveType::Triangles &&
          "Primitive check failed: Only triangle lists are supported.");
 
   GltfModel model{};
-  model.positions = ReadVec3Attribute(model_asset, primitive, "POSITION");
-  model.normals = ReadVec3Attribute(model_asset, primitive, "NORMAL");
+  model.positions = ReadVec3Attribute(asset, primitive, "POSITION");
+  model.normals = ReadVec3Attribute(asset, primitive, "NORMAL");
   assert(model.normals.size() == model.positions.size() &&
          "Attribute check failed: POSITION and NORMAL counts differ.");
 
-  model.indices = ReadIndices(model_asset, primitive);
+  model.indices = ReadIndices(asset, primitive);
   model.model_matrix = ToSimdFloat4x4(mesh_instance.world_matrix);
 
   const Bounds bounds = ComputeBounds(model.positions, model.model_matrix);
   model.bounds_center = bounds.center;
   model.bounds_radius = bounds.radius;
+
+  model.base_color = ReadBaseColor(asset, primitive);
 
   return model;
 }

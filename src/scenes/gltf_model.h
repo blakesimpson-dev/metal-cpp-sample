@@ -13,6 +13,7 @@ struct GltfModel {
   simd::float4x4 model_matrix;
   simd::float3 bounds_center;
   float bounds_radius;
+  simd::float4 base_color;
 };
 
 GltfModel LoadGltfModel(const std::filesystem::path& model_file_path);

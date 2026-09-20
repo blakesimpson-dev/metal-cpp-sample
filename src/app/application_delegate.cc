@@ -28,7 +28,8 @@ void ApplicationDelegate::applicationWillFinishLaunching(
 void ApplicationDelegate::applicationDidFinishLaunching(
     NS::Notification* notification) {
   device_ = MTL::CreateSystemDefaultDevice();
-  assert(device_ != nullptr && "Failed to create device.");
+  assert(device_ != nullptr &&
+         "Device creation failed: No system default device.");
 
   const CGRect content_rect{{kWindowOriginX, kWindowOriginY},
                             {kWindowWidth, kWindowHeight}};
@@ -40,10 +41,10 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   window_ =
       NS::Window::alloc()->init(content_rect, window_style_mask, window_backing,
                                 defer_onscreen_allocation);
-  assert(window_ != nullptr && "Failed to create window.");
+  assert(window_ != nullptr && "Window creation failed: Could not initialize.");
 
   view_ = MTK::View::alloc()->init(content_rect, device_);
-  assert(view_ != nullptr && "Failed to create view.");
+  assert(view_ != nullptr && "View creation failed: Could not initialize.");
 
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);

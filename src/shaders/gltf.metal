@@ -5,7 +5,7 @@ using namespace metal;
 
 struct VertexOut {
   float4 position [[position]];
-  float3 normal;
+  float3 world_normal;
 };
 
 VertexOut vertex GltfVertexMain(uint vertex_id [[vertex_id]],
@@ -17,10 +17,16 @@ VertexOut vertex GltfVertexMain(uint vertex_id [[vertex_id]],
                                 [[buffer(kBufferIndexNormals)]]) {
   VertexOut out;
   out.position = uniforms.mvp * float4(positions[vertex_id], 1.0);
-  out.normal = normals[vertex_id];
+  out.world_normal = uniforms.normal_matrix * normals[vertex_id];
   return out;
 }
 
-half4 fragment GltfFragmentMain(VertexOut in [[stage_in]]) {
-  return half4(half3(normalize(in.normal) * 0.5 + 0.5), 1.0);
+half4 fragment GltfFragmentMain(VertexOut in [[stage_in]],
+                                constant FragmentUniforms& material
+                                [[buffer(kBufferIndexFragmentUniforms)]]) {
+  float3 normal = normalize(in.world_normal);
+  float diffuse = fmax(dot(normal, material.light_direction), 0.0F);
+  float3 color =
+      material.base_color.rgb * (material.ambient_intensity + diffuse);
+  return half4(half3(color), half(material.base_color.a));
 }
