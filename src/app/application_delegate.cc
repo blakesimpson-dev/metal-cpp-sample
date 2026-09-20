@@ -30,7 +30,8 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   device_ = MTL::CreateSystemDefaultDevice();
   assert(device_ != nullptr && "Failed to create device.");
 
-  const CGRect content_rect{kWindowOrigin, kWindowSize};
+  const CGRect content_rect{{kWindowOriginX, kWindowOriginY},
+                            {kWindowWidth, kWindowHeight}};
   const NS::WindowStyleMask window_style_mask =
       NS::WindowStyleMaskTitled | NS::WindowStyleMaskClosable;
   const NS::BackingStoreType window_backing = NS::BackingStoreBuffered;

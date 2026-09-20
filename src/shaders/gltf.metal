@@ -10,10 +10,10 @@ struct VertexOut {
 VertexOut vertex GltfVertexMain(uint vertex_id [[vertex_id]],
                                 device const float3* positions
                                 [[buffer(kBufferIndexPositions)]],
-                                constant float4x4& transform
-                                [[buffer(kBufferIndexTransform)]]) {
+                                constant Uniforms& uniforms
+                                [[buffer(kBufferIndexUniforms)]]) {
   VertexOut out;
-  out.position = transform * float4(positions[vertex_id], 1.0);
+  out.position = uniforms.mvp * float4(positions[vertex_id], 1.0);
   return out;
 }
 
