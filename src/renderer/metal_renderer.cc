@@ -16,6 +16,7 @@ MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
       scene_(scene) {
   assert(command_queue_ != nullptr && "Failed to create command queue.");
   scene_->Load(device_);
+  view_->setClearColor(scene_->ClearColor());
   last_frame_time_ = std::chrono::steady_clock::now();
 }
 

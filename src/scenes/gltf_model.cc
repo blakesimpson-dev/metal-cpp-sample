@@ -24,13 +24,11 @@ MeshInstance FindMeshInstance(fastgltf::Asset& asset) {
   assert(!asset.scenes.empty() && "Scene lookup failed: Model has no scenes.");
 
   const std::size_t gltf_scene_index = asset.defaultScene.value_or(0);
-  // This represents the initial transform for the scene's root nodes
   const fastgltf::math::fmat4x4 root_matrix{};
 
   std::optional<MeshInstance> mesh_instance;
   fastgltf::iterateSceneNodes(
       asset, gltf_scene_index, root_matrix,
-      // The matrix is already accumulated down the node chain
       [&](fastgltf::Node& node, const fastgltf::math::fmat4x4& matrix) {
         if (node.meshIndex.has_value()) {
           assert(!mesh_instance.has_value() &&
@@ -57,7 +55,6 @@ std::vector<simd::float3> ReadVec3Attribute(
   const fastgltf::Accessor& accessor = asset.accessors[iterator->accessorIndex];
   std::vector<simd::float3> out(accessor.count);
 
-  // Copying because fastgltf packs vec3s at 12 bytes
   fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
       asset, accessor, [&](fastgltf::math::fvec3 pos, std::size_t index) {
         out[index] = simd::float3{pos[0], pos[1], pos[2]};
@@ -81,7 +78,6 @@ std::vector<std::uint32_t> ReadIndices(const fastgltf::Asset& asset,
 }
 
 simd::float4x4 ToSimdFloat4x4(const fastgltf::math::fmat4x4& matrix) {
-  // Both matrices are col major, elements copy across without a transpose
   simd::float4x4 out;
   for (int col = 0; col < 4; ++col) {
     for (int row = 0; row < 4; ++row) {
@@ -101,7 +97,6 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
                      const simd::float4x4& model_matrix) {
   assert(!positions.empty() && "Bounds calculation failed: No position data.");
 
-  // w = 1.0F marks a point so the matrix's translation applies!
   const auto to_world = [&](const simd::float3& position) {
     const simd::float4 world = simd_mul(
         model_matrix, simd::float4{position.x, position.y, position.z, 1.0F});
@@ -112,7 +107,7 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
                           std::numeric_limits<float>::max(),
                           std::numeric_limits<float>::max()};
 
-  // lowest(), not min()! min() is the smallest positive float..
+  // NOTE: lowest(), not min()! min() is the smallest positive float..
   simd::float3 max_corner{std::numeric_limits<float>::lowest(),
                           std::numeric_limits<float>::lowest(),
                           std::numeric_limits<float>::lowest()};
@@ -127,7 +122,6 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
   const simd::float3 center = (min_corner + max_corner) * 0.5F;
 
   float radius = 0.0F;
-  // The radius needs the final center, so it takes a second pass
   for (const simd::float3& position : positions) {
     radius = std::max(radius, simd_length(to_world(position) - center));
   }

@@ -48,7 +48,6 @@ void ApplicationDelegate::applicationDidFinishLaunching(
 
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
-  view_->setClearColor(MTL::ClearColor::Make(0.0, 0.0, 0.0, 1.0));
 
   view_delegate_ = new ViewDelegate(device_, view_, scene_);
   view_->setDelegate(view_delegate_);

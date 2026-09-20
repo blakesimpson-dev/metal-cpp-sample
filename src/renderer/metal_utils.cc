@@ -60,7 +60,7 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
 
 MTL::Buffer* CreateBuffer(MTL::Device* device, const void* data,
                           std::size_t length) {
-  // ! ResourceStorageModeManaged path is untested (I don't have access to
+  // NOTE: ResourceStorageModeManaged path is untested (I don't have access to
   // a Mac with dedicated graphics..!)
   const MTL::ResourceOptions storage_mode =
       device->hasUnifiedMemory() ? MTL::ResourceStorageModeShared

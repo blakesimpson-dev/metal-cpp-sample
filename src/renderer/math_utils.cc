@@ -23,7 +23,7 @@ simd::float4x4 DirectedViewMatrix(const simd::float3& eye_position,
                    simd::dot(eye_forward, eye_position), 1.0F}};
 }
 
-// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape, again
+// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape
 simd::float4x4 PerspectiveProjectionMatrix(float fov_y_radians,
                                            float aspect_ratio,
                                            float near_z_distance,

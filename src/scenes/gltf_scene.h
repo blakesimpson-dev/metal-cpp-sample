@@ -14,6 +14,8 @@ class GltfScene : public Scene {
   void Load(MTL::Device* device) override;
   void Update(float delta) override;
   void Draw(MTL::RenderCommandEncoder* command_encoder) override;
+  [[nodiscard]]
+  MTL::ClearColor ClearColor() const override;
 
  private:
   MTL::RenderPipelineState* pipeline_state_ = nullptr;
@@ -28,5 +30,4 @@ class GltfScene : public Scene {
   float x_rotation_angle_ = 0.0F;
   float y_rotation_angle_ = 0.0F;
   float z_rotation_angle_ = 0.0F;
-  float specular_exponent_ = 0.0F;
 };

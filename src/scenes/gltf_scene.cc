@@ -1,6 +1,5 @@
 #include "scenes/gltf_scene.h"
 
-#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -21,12 +20,24 @@ constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
 const simd::float3 kWorldUp{0.0F, 1.0F, 0.0F};
-const simd::float3 kLightDirection{
-    simd::normalize(simd::float3{0.5F, 1.0F, 1.0F})};
-constexpr float kAmbientIntensity = 0.275F;
 constexpr float kXRotationSpeed = 0.25F;
 constexpr float kYRotationSpeed = 0.125F;
 constexpr float kZRotationSpeed = 0.09375F;
+const simd::float3 kLightDirection{
+    simd::normalize(simd::float3{-0.625F, 0.625F, 0.375F})};
+const simd::float3 kSkyColor{0.7F, 0.5F, 0.22F};
+const simd::float3 kGroundColor{0.08F, 0.01F, 0.006F};
+constexpr float kAmbientIntensity = 0.0375F;
+constexpr float kEnvironmentIntensity = 1.25F;
+constexpr float kSpecularIntensity = 6.0F;
+constexpr float kSpecularExponent = 15.0F;
+
+MTL::ClearColor DisplayClearColor(double red, double green, double blue) {
+  return MTL::ClearColor::Make(std::pow(red, 2.2), std::pow(green, 2.2),
+                               std::pow(blue, 2.2), 1.0);
+}
+
+const MTL::ClearColor kSceneClearColor = DisplayClearColor(0.09, 0.055, 0.035);
 }  // namespace
 
 GltfScene::~GltfScene() {
@@ -74,10 +85,6 @@ void GltfScene::Load(MTL::Device* device) {
 
   normals_buffer_ = CreateBuffer(device, model_.normals.data(),
                                  model_.normals.size() * sizeof(simd::float3));
-
-  const float specular_alpha_squared =
-      std::max(std::pow(model_.roughness_factor, 4.0F), 0.001F);
-  specular_exponent_ = (2.0F / specular_alpha_squared) - 2.0F;
 }
 
 void GltfScene::Update(float delta) {
@@ -114,9 +121,15 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
       .base_color = model_.base_color,
       .light_direction = kLightDirection,
       .eye_position = eye_position_,
+      .sky_color = kSkyColor,
+      .ground_color = kGroundColor,
       .ambient_intensity = kAmbientIntensity,
+      .environment_intensity = kEnvironmentIntensity,
+      .specular_intensity = kSpecularIntensity,
+      .specular_exponent = kSpecularExponent,
       .metallic_factor = model_.metallic_factor,
-      .specular_exponent = specular_exponent_};
+      .roughness_factor = model_.roughness_factor,
+  };
 
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setDepthStencilState(depth_stencil_state_);
@@ -137,3 +150,5 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
       static_cast<NS::UInteger>(model_.indices.size()), MTL::IndexTypeUInt32,
       index_buffer_, 0);
 }
+
+MTL::ClearColor GltfScene::ClearColor() const { return kSceneClearColor; }
