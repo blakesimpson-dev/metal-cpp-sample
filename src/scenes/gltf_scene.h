@@ -1,11 +1,8 @@
 #pragma once
 
-#include <simd/simd.h>
-
 #include <Metal/Metal.hpp>
-#include <cstdint>
-#include <vector>
 
+#include "scenes/gltf_model.h"
 #include "scenes/scene.h"
 
 class GltfScene : public Scene {
@@ -22,10 +19,5 @@ class GltfScene : public Scene {
   MTL::RenderPipelineState* pipeline_state_ = nullptr;
   MTL::Buffer* positions_buffer_ = nullptr;
   MTL::Buffer* index_buffer_ = nullptr;
-  std::vector<simd::float3> positions_;
-  std::vector<simd::float3> normals_;
-  std::vector<uint32_t> indices_;
-  simd::float4x4 model_matrix_;
-  simd::float3 bounds_centre_{};
-  float bounds_radius_ = 0.0F;
+  GltfModel model_{};
 };

@@ -64,6 +64,7 @@ target_sources(
     src/renderer/metal_impl.cc
     src/renderer/metal_renderer.cc
     src/renderer/metal_utils.cc
+    src/scenes/gltf_model.cc
     src/scenes/gltf_scene.cc
     src/scenes/minimal_scene.cc
 )
