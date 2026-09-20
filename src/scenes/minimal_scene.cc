@@ -5,6 +5,7 @@
 #include <array>
 #include <iterator>
 
+#include "renderer/camera.h"
 #include "renderer/metal_utils.h"
 #include "shaders/shader_types.h"
 
@@ -42,7 +43,8 @@ void MinimalScene::Load(MTL::Device* device) {
 
 void MinimalScene::Update(float delta) {}
 
-void MinimalScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
+void MinimalScene::Draw(MTL::RenderCommandEncoder* command_encoder,
+                        const Camera& /*camera*/) {
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setVertexBuffer(positions_buffer_, 0, kBufferIndexPositions);
   command_encoder->setVertexBuffer(colors_buffer_, 0, kBufferIndexColors);

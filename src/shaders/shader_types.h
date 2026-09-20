@@ -19,7 +19,7 @@ struct Uniforms {
 struct FragmentUniforms {
   simd::float4 base_color;
   simd::float3 light_direction;
-  simd::float3 eye_position;
+  simd::float3 camera_position;
   simd::float3 sky_color;
   simd::float3 ground_color;
   float ambient_intensity;

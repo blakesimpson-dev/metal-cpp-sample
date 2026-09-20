@@ -4,31 +4,29 @@
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera
 // NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape
-simd::float4x4 DirectedViewMatrix(const simd::float3& eye_position,
-                                  const simd::float3& target_position,
-                                  const simd::float3& world_up) {
+simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
+                              const simd::float3& target_position,
+                              const simd::float3& world_up) {
   // NOLINTEND(bugprone-easily-swappable-parameters)
-  const simd::float3 eye_forward =
-      simd::normalize(target_position - eye_position);
-  const simd::float3 eye_right =
-      simd::normalize(simd::cross(eye_forward, world_up));
-  const simd::float3 eye_up = simd::cross(eye_right, eye_forward);
+  const simd::float3 camera_forward =
+      simd::normalize(target_position - camera_position);
+  const simd::float3 camera_right =
+      simd::normalize(simd::cross(camera_forward, world_up));
+  const simd::float3 camera_up = simd::cross(camera_right, camera_forward);
 
   return simd::float4x4{
-      simd::float4{eye_right.x, eye_up.x, -eye_forward.x, 0.0F},
-      simd::float4{eye_right.y, eye_up.y, -eye_forward.y, 0.0F},
-      simd::float4{eye_right.z, eye_up.z, -eye_forward.z, 0.0F},
-      simd::float4{-simd::dot(eye_right, eye_position),
-                   -simd::dot(eye_up, eye_position),
-                   simd::dot(eye_forward, eye_position), 1.0F}};
+      simd::float4{camera_right.x, camera_up.x, -camera_forward.x, 0.0F},
+      simd::float4{camera_right.y, camera_up.y, -camera_forward.y, 0.0F},
+      simd::float4{camera_right.z, camera_up.z, -camera_forward.z, 0.0F},
+      simd::float4{-simd::dot(camera_right, camera_position),
+                   -simd::dot(camera_up, camera_position),
+                   simd::dot(camera_forward, camera_position), 1.0F}};
 }
 
-// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape
-simd::float4x4 PerspectiveProjectionMatrix(float fov_y_radians,
-                                           float aspect_ratio,
-                                           float near_z_distance,
-                                           float far_z_distance) {
-  // NOLINTEND(bugprone-easily-swappable-parameters)
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape
+simd::float4x4 MakeProjectionMatrix(float fov_y_radians, float aspect_ratio,
+                                    float near_z_distance,
+                                    float far_z_distance) {
   const float y_scale = 1.0F / std::tan(fov_y_radians / 2.0F);
   const float x_scale = y_scale / aspect_ratio;
   const float depth_scale = far_z_distance / (near_z_distance - far_z_distance);

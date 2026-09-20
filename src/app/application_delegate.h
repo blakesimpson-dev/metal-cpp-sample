@@ -20,8 +20,6 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
   static constexpr double kWindowOriginY = 128.0;
   static constexpr double kWindowWidth = 1024.0;
   static constexpr double kWindowHeight = 1024.0;
-  static constexpr float kAspectRatio =
-      static_cast<float>(kWindowWidth / kWindowHeight);
 
   ApplicationDelegate(const ApplicationDelegate&) = delete;
   ApplicationDelegate& operator=(const ApplicationDelegate&) = delete;

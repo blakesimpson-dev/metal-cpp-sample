@@ -3,6 +3,7 @@
 #include <Metal/Metal.hpp>
 #include <chrono>
 
+#include "renderer/camera.h"
 #include "renderer/renderer.h"
 
 namespace MTK {  // NOLINT(readability-identifier-naming)
@@ -29,5 +30,6 @@ class MetalRenderer : public Renderer {
   MTL::CommandQueue* command_queue_;
   MTK::View* view_;
   Scene* scene_;
+  Camera camera_;
   std::chrono::steady_clock::time_point last_frame_time_;
 };

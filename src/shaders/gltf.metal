@@ -41,7 +41,7 @@ half4 fragment GltfFragmentMain(VertexOut in [[stage_in]],
                                 [[buffer(kBufferIndexFragmentUniforms)]]) {
   const float3 normal = normalize(in.world_normal);
   const float3 view_direction =
-      normalize(material.eye_position - in.world_position);
+      normalize(material.camera_position - in.world_position);
   const float3 half_vector =
       normalize(material.light_direction + view_direction);
 

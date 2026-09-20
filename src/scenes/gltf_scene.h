@@ -13,9 +13,11 @@ class GltfScene : public Scene {
   ~GltfScene() override;
   void Load(MTL::Device* device) override;
   void Update(float delta) override;
-  void Draw(MTL::RenderCommandEncoder* command_encoder) override;
+  void Draw(MTL::RenderCommandEncoder* command_encoder,
+            const Camera& camera) override;
+  void ConfigureCamera(Camera& camera) const override;
   [[nodiscard]]
-  MTL::ClearColor ClearColor() const override;
+  MTL::ClearColor SceneClearColor() const override;
 
  private:
   MTL::RenderPipelineState* pipeline_state_ = nullptr;
@@ -24,10 +26,5 @@ class GltfScene : public Scene {
   MTL::Buffer* index_buffer_ = nullptr;
   MTL::Buffer* normals_buffer_ = nullptr;
   GltfModel model_{};
-  simd::float4x4 view_matrix_;
-  simd::float4x4 projection_matrix_;
-  simd::float3 eye_position_{};
-  float x_rotation_angle_ = 0.0F;
-  float y_rotation_angle_ = 0.0F;
-  float z_rotation_angle_ = 0.0F;
+  simd::float3 model_rotation_angles_{};
 };

@@ -13,7 +13,8 @@ class MinimalScene : public Scene {
   ~MinimalScene() override;
   void Load(MTL::Device* device) override;
   void Update(float delta) override;
-  void Draw(MTL::RenderCommandEncoder* command_encoder) override;
+  void Draw(MTL::RenderCommandEncoder* command_encoder,
+            const Camera& /*camera*/) override;
 
  private:
   MTL::RenderPipelineState* pipeline_state_ = nullptr;
