@@ -17,12 +17,16 @@ class GltfScene : public Scene {
 
  private:
   MTL::RenderPipelineState* pipeline_state_ = nullptr;
+  MTL::DepthStencilState* depth_stencil_state_ = nullptr;
   MTL::Buffer* positions_buffer_ = nullptr;
   MTL::Buffer* index_buffer_ = nullptr;
   MTL::Buffer* normals_buffer_ = nullptr;
-  MTL::DepthStencilState* depth_stencil_state_ = nullptr;
   GltfModel model_{};
   simd::float4x4 view_matrix_;
   simd::float4x4 projection_matrix_;
-  float rotation_angle_ = 0.0F;
+  simd::float3 eye_position_{};
+  float x_rotation_angle_ = 0.0F;
+  float y_rotation_angle_ = 0.0F;
+  float z_rotation_angle_ = 0.0F;
+  float specular_exponent_ = 0.0F;
 };

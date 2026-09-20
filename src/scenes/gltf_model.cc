@@ -135,22 +135,14 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
   return Bounds{.center = center, .radius = radius};
 }
 
-simd::float4 ReadBaseColor(const fastgltf::Asset& asset,
-                           const fastgltf::Primitive& primitive) {
+const fastgltf::PBRData& ReadPbrData(const fastgltf::Asset& asset,
+                                     const fastgltf::Primitive& primitive) {
   assert(primitive.materialIndex.has_value() &&
-         "Read base color failed: Primitive has no material.");
+         "Material lookup failed: Primitive has no material.");
   assert(*primitive.materialIndex < asset.materials.size() &&
-         "Read base color failed: Material index out of range.");
+         "Material lookup failed: Material index out of range.");
 
-  const fastgltf::math::nvec4 base_color_factor =
-      asset.materials[*primitive.materialIndex].pbrData.baseColorFactor;
-
-  return simd::float4{
-      base_color_factor[0],
-      base_color_factor[1],
-      base_color_factor[2],
-      base_color_factor[3],
-  };
+  return asset.materials[*primitive.materialIndex].pbrData;
 }
 }  // namespace
 
@@ -193,7 +185,17 @@ GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
   model.bounds_center = bounds.center;
   model.bounds_radius = bounds.radius;
 
-  model.base_color = ReadBaseColor(asset, primitive);
+  const fastgltf::PBRData& pbr_data = ReadPbrData(asset, primitive);
+
+  model.base_color = simd::float4{
+      pbr_data.baseColorFactor[0],
+      pbr_data.baseColorFactor[1],
+      pbr_data.baseColorFactor[2],
+      pbr_data.baseColorFactor[3],
+  };
+
+  model.metallic_factor = pbr_data.metallicFactor;
+  model.roughness_factor = pbr_data.roughnessFactor;
 
   return model;
 }

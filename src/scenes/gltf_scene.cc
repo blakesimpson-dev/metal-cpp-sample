@@ -1,5 +1,6 @@
 #include "scenes/gltf_scene.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -19,18 +20,20 @@ constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
-constexpr float kRotationSpeed = 0.25F;
 const simd::float3 kWorldUp{0.0F, 1.0F, 0.0F};
 const simd::float3 kLightDirection{
     simd::normalize(simd::float3{0.5F, 1.0F, 1.0F})};
-const float kAmbientIntensity = 0.175F;
+constexpr float kAmbientIntensity = 0.275F;
+constexpr float kXRotationSpeed = 0.25F;
+constexpr float kYRotationSpeed = 0.125F;
+constexpr float kZRotationSpeed = 0.09375F;
 }  // namespace
 
 GltfScene::~GltfScene() {
-  depth_stencil_state_->release();
   normals_buffer_->release();
-  positions_buffer_->release();
   index_buffer_->release();
+  positions_buffer_->release();
+  depth_stencil_state_->release();
   pipeline_state_->release();
 }
 
@@ -49,11 +52,10 @@ void GltfScene::Load(MTL::Device* device) {
 
   const float fit_distance =
       model_.bounds_radius / std::sin(kFovYRadians / 2.0F);
-  const simd::float3 eye_position =
-      model_.bounds_center + simd::float3{0.0F, 0.0F, fit_distance};
+  eye_position_ = model_.bounds_center + simd::float3{0.0F, 0.0F, fit_distance};
 
   view_matrix_ =
-      DirectedViewMatrix(eye_position, model_.bounds_center, kWorldUp);
+      DirectedViewMatrix(eye_position_, model_.bounds_center, kWorldUp);
   projection_matrix_ = PerspectiveProjectionMatrix(
       kFovYRadians, ApplicationDelegate::kAspectRatio,
       fit_distance - (2 * model_.bounds_radius),
@@ -61,6 +63,7 @@ void GltfScene::Load(MTL::Device* device) {
 
   pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
                                               kFragmentShaderFunctionName);
+  depth_stencil_state_ = CreateDepthStencilState(device);
 
   positions_buffer_ =
       CreateBuffer(device, model_.positions.data(),
@@ -72,12 +75,18 @@ void GltfScene::Load(MTL::Device* device) {
   normals_buffer_ = CreateBuffer(device, model_.normals.data(),
                                  model_.normals.size() * sizeof(simd::float3));
 
-  depth_stencil_state_ = CreateDepthStencilState(device);
+  const float specular_alpha_squared =
+      std::max(std::pow(model_.roughness_factor, 4.0F), 0.001F);
+  specular_exponent_ = (2.0F / specular_alpha_squared) - 2.0F;
 }
 
 void GltfScene::Update(float delta) {
-  rotation_angle_ = std::fmod(rotation_angle_ + (kRotationSpeed * delta),
-                              2.0F * std::numbers::pi_v<float>);
+  x_rotation_angle_ = std::fmod(x_rotation_angle_ + (kXRotationSpeed * delta),
+                                2.0F * std::numbers::pi_v<float>);
+  y_rotation_angle_ = std::fmod(x_rotation_angle_ + (kYRotationSpeed * delta),
+                                2.0F * std::numbers::pi_v<float>);
+  z_rotation_angle_ = std::fmod(x_rotation_angle_ + (kZRotationSpeed * delta),
+                                2.0F * std::numbers::pi_v<float>);
 }
 
 void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
@@ -87,24 +96,27 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
       TranslationMatrix(-model_.bounds_center);
 
   const simd::float4x4 delta_rotation_matrix =
-      (XRotationMatrix(rotation_angle_ * 0.5F) *
-       YRotationMatrix(rotation_angle_) *
-       ZRotationMatrix(rotation_angle_ * 0.125F));
+      (XRotationMatrix(x_rotation_angle_) * YRotationMatrix(y_rotation_angle_) *
+       ZRotationMatrix(z_rotation_angle_));
 
-  const simd::float4x4 mvp_model_matrix =
-      from_origin_matrix * delta_rotation_matrix * to_origin_matrix;
+  const simd::float4x4 model_world_matrix =
+      from_origin_matrix * delta_rotation_matrix * to_origin_matrix *
+      model_.model_matrix;
 
   const Uniforms uniforms{
       // NOTE: Order matters! mvp must always be evaluated in the following
       // order (reverse): projection * view * model
-      .mvp = projection_matrix_ * view_matrix_ * mvp_model_matrix,
-      .normal_matrix = NormalMatrix(mvp_model_matrix)};
+      .mvp = projection_matrix_ * view_matrix_ * model_world_matrix,
+      .world_matrix = model_world_matrix,
+      .normal_matrix = NormalMatrix(model_world_matrix)};
 
   const FragmentUniforms fragment_uniforms{
       .base_color = model_.base_color,
       .light_direction = kLightDirection,
+      .eye_position = eye_position_,
       .ambient_intensity = kAmbientIntensity,
-  };
+      .metallic_factor = model_.metallic_factor,
+      .specular_exponent = specular_exponent_};
 
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setDepthStencilState(depth_stencil_state_);
