@@ -12,20 +12,18 @@
 #include <iostream>
 #include <limits>
 #include <optional>
-#include <string>
 #include <string_view>
 #include <vector>
 
 #include "platform/executable_path.h"
-#include "renderer/metal_renderer.h"
+#include "renderer/metal_utils.h"
+#include "shaders/shader_types.h"
 
 namespace {
 constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";
 constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
-constexpr NS::UInteger kPositionsBufferIndex = 0;
-constexpr NS::UInteger kTransformBufferIndex = 1;
 
 std::vector<simd::float3> ReadVec3Attribute(
     const fastgltf::Asset& asset, const fastgltf::Primitive& primitive,
@@ -199,58 +197,14 @@ void GltfScene::Load(MTL::Device* device) {
             << bounds_centre_.x << ", " << bounds_centre_.y << ", "
             << bounds_centre_.z << "), radius " << bounds_radius_ << "\n";
 
-  NS::Error* shader_library_error = nullptr;
-  std::string shader_library_path =
-      (ExecutableDirectoryPath() / "shaders.metallib").string();
-  NS::URL* shader_library_url = NS::URL::fileURLWithPath(NS::String::string(
-      shader_library_path.c_str(), NS::StringEncoding::UTF8StringEncoding));
+  pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
+                                              kFragmentShaderFunctionName);
 
-  MTL::Library* shader_library =
-      device->newLibrary(shader_library_url, &shader_library_error);
-  assert(shader_library != nullptr && "Failed to create shader library.");
+  positions_buffer_ = CreateBuffer(device, positions_.data(),
+                                   positions_.size() * sizeof(simd::float3));
 
-  MTL::Function* vertex_main = shader_library->newFunction(NS::String::string(
-      kVertexShaderFunctionName, NS::StringEncoding::UTF8StringEncoding));
-  assert(vertex_main != nullptr && "Failed to create shader vertex function.");
-
-  MTL::Function* fragment_main = shader_library->newFunction(NS::String::string(
-      kFragmentShaderFunctionName, NS::StringEncoding::UTF8StringEncoding));
-  assert(fragment_main != nullptr &&
-         "Failed to create shader fragment function.");
-
-  MTL::RenderPipelineDescriptor* pipeline_descriptor =
-      MTL::RenderPipelineDescriptor::alloc()->init();
-
-  pipeline_descriptor->setVertexFunction(vertex_main);
-  pipeline_descriptor->setFragmentFunction(fragment_main);
-  pipeline_descriptor->colorAttachments()->object(0)->setPixelFormat(
-      MetalRenderer::kColorPixelFormat);
-
-  NS::Error* pipeline_state_error = nullptr;
-  pipeline_state_ = device->newRenderPipelineState(pipeline_descriptor,
-                                                   &pipeline_state_error);
-  assert(pipeline_state_ != nullptr &&
-         "Failed to create render pipeline state.");
-
-  // ! ResourceStorageModeManaged path is untested (I don't have access to
-  // a Mac with dedicated graphics..!)
-  MTL::ResourceOptions storage_mode = device->hasUnifiedMemory()
-                                          ? MTL::ResourceStorageModeShared
-                                          : MTL::ResourceStorageModeManaged;
-
-  positions_buffer_ =
-      device->newBuffer(positions_.data(),
-                        positions_.size() * sizeof(simd::float3), storage_mode);
-  assert(positions_buffer_ != nullptr && "Failed to create positions buffer.");
-
-  index_buffer_ = device->newBuffer(
-      indices_.data(), indices_.size() * sizeof(std::uint32_t), storage_mode);
-  assert(index_buffer_ != nullptr && "Failed to create indices buffer.");
-
-  pipeline_descriptor->release();
-  fragment_main->release();
-  vertex_main->release();
-  shader_library->release();
+  index_buffer_ = CreateBuffer(device, indices_.data(),
+                               indices_.size() * sizeof(std::uint32_t));
 }
 
 void GltfScene::Update(float delta) {}
@@ -268,9 +222,9 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
   command_encoder->setCullMode(MTL::CullModeNone);
-  command_encoder->setVertexBuffer(positions_buffer_, 0, kPositionsBufferIndex);
+  command_encoder->setVertexBuffer(positions_buffer_, 0, kBufferIndexPositions);
   command_encoder->setVertexBytes(&transform, sizeof(transform),
-                                  kTransformBufferIndex);
+                                  kBufferIndexTransform);
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,
       static_cast<NS::UInteger>(indices_.size()), MTL::IndexTypeUInt32,

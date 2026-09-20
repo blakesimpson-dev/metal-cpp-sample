@@ -1,14 +1,18 @@
 #include <metal_stdlib>
 using namespace metal;
 
+#include "shader_types.h"
+
 struct VertexOut {
   float4 position [[position]];
   half3 color;
 };
 
 VertexOut vertex VertexMain(uint vertex_id [[vertex_id]],
-                            device const float3* positions [[buffer(0)]],
-                            device const float3* colors [[buffer(1)]]) {
+                            device const float3* positions
+                            [[buffer(kBufferIndexPositions)]],
+                            device const float3* colors
+                            [[buffer(kBufferIndexColors)]]) {
   VertexOut out;
   out.position = float4(positions[vertex_id], 1.0);
   out.color = half3(colors[vertex_id]);

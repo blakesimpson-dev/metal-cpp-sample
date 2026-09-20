@@ -1,7 +1,7 @@
 #pragma once
 
-// enum BufferIndex : std::uint8_t {
-enum BufferIndex {
+enum BufferIndex {  // NOLINT(performance-enum-size)
   kBufferIndexPositions = 0,
-  kBufferIndexTransform = 1,
+  kBufferIndexColors = 1,
+  kBufferIndexTransform = 2,
 };
