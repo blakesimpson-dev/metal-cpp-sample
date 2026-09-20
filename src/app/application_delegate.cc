@@ -10,10 +10,6 @@
 #include "app/view_delegate.h"
 #include "renderer/metal_renderer.h"
 
-namespace {
-constexpr const char* kWindowTitle = "Metal-cpp Sample";
-}
-
 ApplicationDelegate::ApplicationDelegate(Scene* scene) : scene_(scene) {}
 
 ApplicationDelegate::~ApplicationDelegate() {
@@ -34,11 +30,11 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   device_ = MTL::CreateSystemDefaultDevice();
   assert(device_ != nullptr && "Failed to create device.");
 
-  CGRect content_rect = (CGRect){{128.0, 128.0}, {1024.0, 1024.0}};
-  NS::WindowStyleMask window_style_mask =
+  const CGRect content_rect{kWindowOrigin, kWindowSize};
+  const NS::WindowStyleMask window_style_mask =
       NS::WindowStyleMaskTitled | NS::WindowStyleMaskClosable;
-  NS::BackingStoreType window_backing = NS::BackingStoreBuffered;
-  bool defer_onscreen_allocation = false;
+  const NS::BackingStoreType window_backing = NS::BackingStoreBuffered;
+  const bool defer_onscreen_allocation = false;
 
   window_ =
       NS::Window::alloc()->init(content_rect, window_style_mask, window_backing,

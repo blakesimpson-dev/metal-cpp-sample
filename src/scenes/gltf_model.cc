@@ -97,8 +97,8 @@ struct Bounds {
   float radius;
 };
 
-Bounds CalculateBounds(const std::vector<simd::float3>& positions,
-                       const simd::float4x4& model_matrix) {
+Bounds ComputeBounds(const std::vector<simd::float3>& positions,
+                     const simd::float4x4& model_matrix) {
   assert(!positions.empty() && "Bounds calculation failed: No position data.");
 
   // w = 1.0F marks a point so the matrix's translation applies!
@@ -172,7 +172,7 @@ GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
   model.indices = ReadIndices(model_asset, primitive);
   model.model_matrix = ToSimdFloat4x4(mesh_instance.world_matrix);
 
-  const Bounds bounds = CalculateBounds(model.positions, model.model_matrix);
+  const Bounds bounds = ComputeBounds(model.positions, model.model_matrix);
   model.bounds_centre = bounds.centre;
   model.bounds_radius = bounds.radius;
 

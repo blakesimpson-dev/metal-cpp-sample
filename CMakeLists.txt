@@ -61,6 +61,7 @@ target_sources(
     src/app/view_delegate.cc
     src/main.cc
     src/platform/executable_path.cc
+    src/renderer/math_utils.cc
     src/renderer/metal_impl.cc
     src/renderer/metal_renderer.cc
     src/renderer/metal_utils.cc

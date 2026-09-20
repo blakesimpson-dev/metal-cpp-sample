@@ -1,2 +1,7 @@
 BasedOnStyle: Google
 PointerAlignment: Left
+---
+Language: ObjC
+BasedOnStyle: Google
+ColumnLimit: 80
+PointerAlignment: Left

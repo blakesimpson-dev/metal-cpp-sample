@@ -1,5 +1,7 @@
 #pragma once
 
+#include <CoreFoundation/CFCGTypes.h>
+
 #include <AppKit/AppKit.hpp>
 
 namespace MTL {  // NOLINT(readability-identifier-naming)
@@ -15,6 +17,10 @@ class ViewDelegate;
 
 class ApplicationDelegate : public NS::ApplicationDelegate {
  public:
+  static constexpr const char* kWindowTitle = "Metal-cpp Sample";
+  static constexpr CGPoint kWindowOrigin{128.0, 128.0};
+  static constexpr CGSize kWindowSize{1024.0, 1024.0};
+
   ApplicationDelegate(const ApplicationDelegate&) = delete;
   ApplicationDelegate& operator=(const ApplicationDelegate&) = delete;
   explicit ApplicationDelegate(Scene* scene);
