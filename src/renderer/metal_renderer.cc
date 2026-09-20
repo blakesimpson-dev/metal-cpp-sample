@@ -4,23 +4,19 @@
 
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>
+#include <chrono>
 #include <cstring>
 
 #include "scenes/scene.h"
 
-namespace {
-constexpr const char* kVertexShaderFunctionName = "VertexMain";
-constexpr const char* kFragmentShaderFunctionName = "FragmentMain";
-constexpr NS::UInteger kPositionsBufferIndex = 0;
-constexpr NS::UInteger kColorsBufferIndex = 1;
-}  // namespace
-
 MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
-    : device_(device->retain()), view_(view), scene_(scene) {
-  command_queue_ = device_->newCommandQueue();
+    : device_(device->retain()),
+      command_queue_(device->newCommandQueue()),
+      view_(view),
+      scene_(scene) {
   assert(command_queue_ != nullptr && "Failed to create command queue.");
-
   scene_->Load(device_);
+  last_frame_time_ = std::chrono::steady_clock::now();
 }
 
 MetalRenderer::~MetalRenderer() {
@@ -29,6 +25,13 @@ MetalRenderer::~MetalRenderer() {
 }
 
 void MetalRenderer::Draw() {
+  const std::chrono::steady_clock::time_point now =
+      std::chrono::steady_clock::now();
+  const float delta =
+      std::chrono::duration<float>(now - last_frame_time_).count();
+  last_frame_time_ = now;
+  scene_->Update(delta);
+
   NS::AutoreleasePool* pool = NS::AutoreleasePool::alloc()->init();
 
   MTL::CommandBuffer* command_buffer = command_queue_->commandBuffer();

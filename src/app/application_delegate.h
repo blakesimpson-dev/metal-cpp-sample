@@ -33,9 +33,9 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
       NS::Application* sender) override;
 
  private:
-  MTL::Device* device_;
-  NS::Window* window_;
-  MTK::View* view_;
+  MTL::Device* device_ = nullptr;
+  NS::Window* window_ = nullptr;
+  MTK::View* view_ = nullptr;
   Scene* scene_;
-  ViewDelegate* view_delegate_;
+  ViewDelegate* view_delegate_ = nullptr;
 };

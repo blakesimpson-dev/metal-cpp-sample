@@ -23,15 +23,15 @@ void MinimalScene::Load(MTL::Device* device) {
   pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
                                               kFragmentShaderFunctionName);
 
-  std::array positions{simd::float3{-0.675F, 0.675F, 0.0F},
-                       simd::float3{0.0F, -0.675F, 0.0F},
-                       simd::float3{+0.675F, 0.675F, 0.0F}};
+  const std::array positions{simd::float3{-0.675F, 0.675F, 0.0F},
+                             simd::float3{0.0F, -0.675F, 0.0F},
+                             simd::float3{+0.675F, 0.675F, 0.0F}};
 
   vertex_count_ = std::size(positions);
 
-  std::array colors{simd::float3{1.0F, 0.0F, 0.0F},
-                    simd::float3{0.0F, 1.0F, 0.0F},
-                    simd::float3{0.0F, 0.0F, 1.0F}};
+  const std::array colors{simd::float3{1.0F, 0.0F, 0.0F},
+                          simd::float3{0.0F, 1.0F, 0.0F},
+                          simd::float3{0.0F, 0.0F, 1.0F}};
 
   positions_buffer_ = CreateBuffer(device, positions.data(),
                                    positions.size() * sizeof(simd::float3));

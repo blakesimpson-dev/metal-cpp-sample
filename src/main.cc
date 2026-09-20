@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
   std::string_view scene_name = "gltf";
   for (int i = 1; i < argc; ++i) {
-    std::string_view arg = argv[i];
+    const std::string_view arg = argv[i];
     if (arg.starts_with(kSceneFlag)) {
       scene_name = arg.substr(kSceneFlag.size());
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Metal/Metal.hpp>
-#include <cstddef>
+#include <chrono>
 
 #include "renderer/renderer.h"
 
@@ -29,5 +29,5 @@ class MetalRenderer : public Renderer {
   MTL::CommandQueue* command_queue_;
   MTK::View* view_;
   Scene* scene_;
-  size_t vertex_count_;
+  std::chrono::steady_clock::time_point last_frame_time_;
 };

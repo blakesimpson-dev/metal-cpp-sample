@@ -93,7 +93,7 @@ simd::float4x4 ToSimdFloat4x4(const fastgltf::math::fmat4x4& matrix) {
 }
 
 struct Bounds {
-  simd::float3 centre;
+  simd::float3 center;
   float radius;
 };
 
@@ -124,15 +124,15 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
     max_corner = simd_max(max_corner, world_position);
   }
 
-  const simd::float3 centre = (min_corner + max_corner) * 0.5F;
+  const simd::float3 center = (min_corner + max_corner) * 0.5F;
 
   float radius = 0.0F;
-  // The radius needs the final centre, so it takes a second pass
+  // The radius needs the final center, so it takes a second pass
   for (const simd::float3& position : positions) {
-    radius = std::max(radius, simd_length(to_world(position) - centre));
+    radius = std::max(radius, simd_length(to_world(position) - center));
   }
 
-  return Bounds{.centre = centre, .radius = radius};
+  return Bounds{.center = center, .radius = radius};
 }
 }  // namespace
 
@@ -173,7 +173,7 @@ GltfModel LoadGltfModel(const std::filesystem::path& model_file_path) {
   model.model_matrix = ToSimdFloat4x4(mesh_instance.world_matrix);
 
   const Bounds bounds = ComputeBounds(model.positions, model.model_matrix);
-  model.bounds_centre = bounds.centre;
+  model.bounds_center = bounds.center;
   model.bounds_radius = bounds.radius;
 
   return model;

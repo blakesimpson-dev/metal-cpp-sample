@@ -11,7 +11,7 @@ struct GltfModel {
   std::vector<simd::float3> normals;
   std::vector<std::uint32_t> indices;
   simd::float4x4 model_matrix;
-  simd::float3 bounds_centre;
+  simd::float3 bounds_center;
   float bounds_radius;
 };
 

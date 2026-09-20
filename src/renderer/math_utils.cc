@@ -4,9 +4,9 @@
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera
 // NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape
-simd::float4x4 LookAtView(const simd::float3& eye_position,
-                          const simd::float3& target_position,
-                          const simd::float3& world_up) {
+simd::float4x4 UpdateViewMatrix(const simd::float3& eye_position,
+                                const simd::float3& target_position,
+                                const simd::float3& world_up) {
   // NOLINTEND(bugprone-easily-swappable-parameters)
   const simd::float3 eye_forward =
       simd::normalize(target_position - eye_position);
@@ -14,21 +14,19 @@ simd::float4x4 LookAtView(const simd::float3& eye_position,
       simd::normalize(simd::cross(eye_forward, world_up));
   const simd::float3 eye_up = simd::cross(eye_right, eye_forward);
 
-  const simd::float4x4 view_matrix(
+  return simd::float4x4{
       simd::float4{eye_right.x, eye_up.x, -eye_forward.x, 0.0F},
       simd::float4{eye_right.y, eye_up.y, -eye_forward.y, 0.0F},
       simd::float4{eye_right.z, eye_up.z, -eye_forward.z, 0.0F},
       simd::float4{-simd::dot(eye_right, eye_position),
                    -simd::dot(eye_up, eye_position),
-                   simd::dot(eye_forward, eye_position), 1.0F});
-
-  return view_matrix;
+                   simd::dot(eye_forward, eye_position), 1.0F}};
 }
 
 // NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape, again
-simd::float4x4 PerspectiveProjection(float fov_y_radians, float aspect_ratio,
-                                     float near_z_distance,
-                                     float far_z_distance) {
+simd::float4x4 UpdateProjectionMatrix(float fov_y_radians, float aspect_ratio,
+                                      float near_z_distance,
+                                      float far_z_distance) {
   // NOLINTEND(bugprone-easily-swappable-parameters)
   const float y_scale = 1.0F / std::tan(fov_y_radians / 2.0F);
   const float x_scale = y_scale / aspect_ratio;
@@ -36,11 +34,44 @@ simd::float4x4 PerspectiveProjection(float fov_y_radians, float aspect_ratio,
   const float depth_offset =
       (near_z_distance * far_z_distance) / (near_z_distance - far_z_distance);
 
-  const simd::float4x4 projection_matrix(
-      simd::float4{x_scale, 0.0F, 0.0F, 0.0F},
-      simd::float4{0.0F, y_scale, 0.0F, 0.0F},
-      simd::float4{0.0F, 0.0F, depth_scale, -1.0F},
-      simd::float4{0.0F, 0.0F, depth_offset, 0.0F});
+  return simd::float4x4{simd::float4{x_scale, 0.0F, 0.0F, 0.0F},
+                        simd::float4{0.0F, y_scale, 0.0F, 0.0F},
+                        simd::float4{0.0F, 0.0F, depth_scale, -1.0F},
+                        simd::float4{0.0F, 0.0F, depth_offset, 0.0F}};
+}
 
-  return projection_matrix;
+simd::float4x4 UpdateTranslationMatrix(const simd::float3& offset) {
+  return simd::float4x4{simd::float4{1.0F, 0.0F, 0.0F, 0.0F},
+                        simd::float4{0.0F, 1.0F, 0.0F, 0.0F},
+                        simd::float4{0.0F, 0.0F, 1.0F, 0.0F},
+                        simd::float4{offset.x, offset.y, offset.z, 1.0F}};
+}
+
+// TODO(Blake): Look at GLM's implementation, it allows for a unit axis. See
+// about applying the same approach here
+simd::float4x4 UpdateXAxisRotationMatrix(float angle_radians) {
+  const float cos_angle = std::cos(angle_radians);
+  const float sin_angle = std::sin(angle_radians);
+  return simd::float4x4{simd::float4{1.0F, 0.0F, 0.0F, 0.0F},
+                        simd::float4{0.0F, cos_angle, sin_angle, 0.0F},
+                        simd::float4{0.0F, -sin_angle, cos_angle, 0.0F},
+                        simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
+}
+
+simd::float4x4 UpdateYAxisRotationMatrix(float angle_radians) {
+  const float cos_angle = std::cos(angle_radians);
+  const float sin_angle = std::sin(angle_radians);
+  return simd::float4x4{simd::float4{cos_angle, 0.0F, -sin_angle, 0.0F},
+                        simd::float4{0.0F, 1.0F, 0.0F, 0.0F},
+                        simd::float4{sin_angle, 0.0F, cos_angle, 0.0F},
+                        simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
+}
+
+simd::float4x4 UpdateZAxisRotationMatrix(float angle_radians) {
+  const float cos_angle = std::cos(angle_radians);
+  const float sin_angle = std::sin(angle_radians);
+  return simd::float4x4{simd::float4{cos_angle, sin_angle, 0.0F, 0.0F},
+                        simd::float4{-sin_angle, cos_angle, 0.0F, 0.0F},
+                        simd::float4{0.0F, 0.0F, 1.0F, 0.0F},
+                        simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
 }

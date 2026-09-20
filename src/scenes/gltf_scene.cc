@@ -18,7 +18,8 @@ constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";
 constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
-constexpr const float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
+constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
+constexpr float kRotationSpeed = 0.25F;
 const simd::float3 kWorldUp{0.0F, 1.0F, 0.0F};
 }  // namespace
 
@@ -39,20 +40,20 @@ void GltfScene::Load(MTL::Device* device) {
   model_ = LoadGltfModel(model_file_path);
   std::cout << "Loaded '" << kModelFileName << "': " << model_.positions.size()
             << " vertices, " << model_.indices.size()
-            << " indices, bounds centre (" << model_.bounds_centre.x << ", "
-            << model_.bounds_centre.y << ", " << model_.bounds_centre.z
+            << " indices, bounds center (" << model_.bounds_center.x << ", "
+            << model_.bounds_center.y << ", " << model_.bounds_center.z
             << "), radius " << model_.bounds_radius << "\n";
 
   const float fit_distance =
       model_.bounds_radius / std::sin(kFovYRadians / 2.0F);
   const simd::float3 eye_position =
-      model_.bounds_centre + simd::float3{0.0F, 0.0F, fit_distance};
+      model_.bounds_center + simd::float3{0.0F, 0.0F, fit_distance};
 
-  view_matrix_ = LookAtView(eye_position, model_.bounds_centre, kWorldUp);
+  view_matrix_ = UpdateViewMatrix(eye_position, model_.bounds_center, kWorldUp);
   projection_matrix_ =
-      PerspectiveProjection(kFovYRadians, ApplicationDelegate::kAspectRatio,
-                            fit_distance - (2 * model_.bounds_radius),
-                            fit_distance + (2 * model_.bounds_radius));
+      UpdateProjectionMatrix(kFovYRadians, ApplicationDelegate::kAspectRatio,
+                             fit_distance - (2 * model_.bounds_radius),
+                             fit_distance + (2 * model_.bounds_radius));
 
   pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
                                               kFragmentShaderFunctionName);
@@ -70,12 +71,25 @@ void GltfScene::Load(MTL::Device* device) {
   depth_stencil_state_ = CreateDepthStencilState(device);
 }
 
-void GltfScene::Update(float delta) {}
+void GltfScene::Update(float delta) {
+  rotation_angle_ = std::fmod(rotation_angle_ + (kRotationSpeed * delta),
+                              2.0F * std::numbers::pi_v<float>);
+}
 
 void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
-  const Uniforms uniforms{
-      .mvp = simd_mul(projection_matrix_,
-                      simd_mul(view_matrix_, model_.model_matrix))};
+  const simd::float4x4 from_origin_matrix =
+      UpdateTranslationMatrix(model_.bounds_center);
+  const simd::float4x4 to_origin_matrix =
+      UpdateTranslationMatrix(-model_.bounds_center);
+
+  const simd::float4x4 rotation_delta_matrix =
+      from_origin_matrix *
+      (UpdateXAxisRotationMatrix(rotation_angle_) *
+       UpdateYAxisRotationMatrix(rotation_angle_)) *
+      to_origin_matrix;
+
+  const Uniforms uniforms{.mvp = projection_matrix_ * view_matrix_ *
+                                 rotation_delta_matrix};
 
   command_encoder->setRenderPipelineState(pipeline_state_);
   command_encoder->setDepthStencilState(depth_stencil_state_);
@@ -85,7 +99,6 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
   command_encoder->setVertexBuffer(normals_buffer_, 0, kBufferIndexNormals);
   command_encoder->setVertexBytes(&uniforms, sizeof(uniforms),
                                   kBufferIndexUniforms);
-
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,
       static_cast<NS::UInteger>(model_.indices.size()), MTL::IndexTypeUInt32,

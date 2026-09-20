@@ -12,7 +12,7 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
     MTL::Device* device, const char* vertex_function_name,
     const char* fragment_function_name) {
   NS::Error* shader_library_error = nullptr;
-  std::string shader_library_path =
+  const std::string shader_library_path =
       (ExecutableDirectoryPath() / "shaders.metallib").string();
   NS::URL* shader_library_url = NS::URL::fileURLWithPath(NS::String::string(
       shader_library_path.c_str(), NS::StringEncoding::UTF8StringEncoding));
@@ -62,9 +62,9 @@ MTL::Buffer* CreateBuffer(MTL::Device* device, const void* data,
                           std::size_t length) {
   // ! ResourceStorageModeManaged path is untested (I don't have access to
   // a Mac with dedicated graphics..!)
-  MTL::ResourceOptions storage_mode = device->hasUnifiedMemory()
-                                          ? MTL::ResourceStorageModeShared
-                                          : MTL::ResourceStorageModeManaged;
+  const MTL::ResourceOptions storage_mode =
+      device->hasUnifiedMemory() ? MTL::ResourceStorageModeShared
+                                 : MTL::ResourceStorageModeManaged;
   MTL::Buffer* buffer = device->newBuffer(data, length, storage_mode);
   assert(buffer != nullptr &&
          "Buffer creation failed: Metal could not allocate the buffer.");

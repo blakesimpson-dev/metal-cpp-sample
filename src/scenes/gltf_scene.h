@@ -24,4 +24,5 @@ class GltfScene : public Scene {
   GltfModel model_{};
   simd::float4x4 view_matrix_;
   simd::float4x4 projection_matrix_;
+  float rotation_angle_ = 0.0F;
 };
