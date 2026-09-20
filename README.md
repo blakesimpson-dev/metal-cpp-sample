@@ -17,7 +17,7 @@ and explained. The commit history follows and documents that progression.
 - glTF 2.0 loading with fastgltf (mesh, normals, material factors)
 - Perspective camera framed from the model's bounding sphere
 - Depth buffer, Lambert diffuse, Blinn-Phong specular
-- PBR-inspired material response: metal/dielectric split, Fresnel-Schlick
+- PBR inspired material response: metal/dielectric split, Fresnel-Schlick
   reflectance and a procedural environment reflection (no textures)
 - Frame-delta animation
 
