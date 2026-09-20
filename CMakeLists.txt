@@ -73,8 +73,11 @@ target_sources(
 
 target_include_directories(
   ${PROJECT_NAME}
-  PRIVATE external/metal-cpp external/metal-cpp-extensions src
+  SYSTEM PRIVATE external/metal-cpp external/metal-cpp-extensions
+  PRIVATE src
 )
+
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wextra-semi)
 
 target_link_libraries(
   ${PROJECT_NAME}

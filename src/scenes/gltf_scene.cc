@@ -80,14 +80,14 @@ void GltfScene::Update(float delta) {
 void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
                      const Camera& camera) {
   const simd::float4x4 from_origin_matrix =
-      TranslationMatrix(model_.bounds_center);
+      MakeTranslationMatrix(model_.bounds_center);
   const simd::float4x4 to_origin_matrix =
-      TranslationMatrix(-model_.bounds_center);
+      MakeTranslationMatrix(-model_.bounds_center);
 
   const simd::float4x4 delta_rotation_matrix =
-      (XRotationMatrix(model_rotation_angles_.x) *
-       YRotationMatrix(model_rotation_angles_.y) *
-       ZRotationMatrix(model_rotation_angles_.z));
+      (MakeXRotationMatrix(model_rotation_angles_.x) *
+       MakeYRotationMatrix(model_rotation_angles_.y) *
+       MakeZRotationMatrix(model_rotation_angles_.z));
 
   const simd::float4x4 model_world_matrix =
       from_origin_matrix * delta_rotation_matrix * to_origin_matrix *
@@ -99,7 +99,7 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       .mvp =
           camera.ProjectionMatrix() * camera.ViewMatrix() * model_world_matrix,
       .world_matrix = model_world_matrix,
-      .normal_matrix = NormalMatrix(model_world_matrix)};
+      .normal_matrix = MakeNormalMatrix(model_world_matrix)};
 
   const FragmentUniforms fragment_uniforms{
       .base_color = model_.base_color,

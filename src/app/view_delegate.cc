@@ -7,4 +7,4 @@ ViewDelegate::ViewDelegate(MTL::Device* device, MTK::View* view, Scene* scene)
 
 ViewDelegate::~ViewDelegate() { delete renderer_; }
 
-void ViewDelegate::drawInMTKView(MTK::View* view) { renderer_->Draw(); }
+void ViewDelegate::drawInMTKView(MTK::View* /*view*/) { renderer_->Draw(); }

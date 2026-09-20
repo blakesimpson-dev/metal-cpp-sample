@@ -41,7 +41,7 @@ void MinimalScene::Load(MTL::Device* device) {
       CreateBuffer(device, colors.data(), colors.size() * sizeof(simd::float3));
 }
 
-void MinimalScene::Update(float delta) {}
+void MinimalScene::Update(float /*delta*/) {}
 
 void MinimalScene::Draw(MTL::RenderCommandEncoder* command_encoder,
                         const Camera& /*camera*/) {

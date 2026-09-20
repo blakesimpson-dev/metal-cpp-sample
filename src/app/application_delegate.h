@@ -25,10 +25,12 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
   ApplicationDelegate& operator=(const ApplicationDelegate&) = delete;
   explicit ApplicationDelegate(Scene* scene);
   ~ApplicationDelegate() override;
-  void applicationWillFinishLaunching(NS::Notification* notification) override;
-  void applicationDidFinishLaunching(NS::Notification* notification) override;
+  void applicationWillFinishLaunching(
+      NS::Notification* /*notification*/) override;
+  void applicationDidFinishLaunching(
+      NS::Notification* /*notification*/) override;
   bool applicationShouldTerminateAfterLastWindowClosed(
-      NS::Application* sender) override;
+      NS::Application* /*sender*/) override;
 
  private:
   MTL::Device* device_ = nullptr;

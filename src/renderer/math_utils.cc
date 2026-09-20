@@ -39,7 +39,7 @@ simd::float4x4 MakeProjectionMatrix(float fov_y_radians, float aspect_ratio,
                         simd::float4{0.0F, 0.0F, depth_offset, 0.0F}};
 }
 
-simd::float3x3 NormalMatrix(const simd::float4x4& model_matrix) {
+simd::float3x3 MakeNormalMatrix(const simd::float4x4& model_matrix) {
   return simd::transpose(simd::inverse(simd::float3x3{
       model_matrix.columns[0].xyz,
       model_matrix.columns[1].xyz,
@@ -47,7 +47,7 @@ simd::float3x3 NormalMatrix(const simd::float4x4& model_matrix) {
   }));
 }
 
-simd::float4x4 TranslationMatrix(const simd::float3& offset) {
+simd::float4x4 MakeTranslationMatrix(const simd::float3& offset) {
   return simd::float4x4{simd::float4{1.0F, 0.0F, 0.0F, 0.0F},
                         simd::float4{0.0F, 1.0F, 0.0F, 0.0F},
                         simd::float4{0.0F, 0.0F, 1.0F, 0.0F},
@@ -56,7 +56,7 @@ simd::float4x4 TranslationMatrix(const simd::float3& offset) {
 
 // TODO(Blake): Look at GLM's implementation, it allows for a unit axis. See
 // about applying the same approach here
-simd::float4x4 XRotationMatrix(float angle_radians) {
+simd::float4x4 MakeXRotationMatrix(float angle_radians) {
   const float cos_angle = std::cos(angle_radians);
   const float sin_angle = std::sin(angle_radians);
   return simd::float4x4{simd::float4{1.0F, 0.0F, 0.0F, 0.0F},
@@ -65,7 +65,7 @@ simd::float4x4 XRotationMatrix(float angle_radians) {
                         simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
 }
 
-simd::float4x4 YRotationMatrix(float angle_radians) {
+simd::float4x4 MakeYRotationMatrix(float angle_radians) {
   const float cos_angle = std::cos(angle_radians);
   const float sin_angle = std::sin(angle_radians);
   return simd::float4x4{simd::float4{cos_angle, 0.0F, -sin_angle, 0.0F},
@@ -74,7 +74,7 @@ simd::float4x4 YRotationMatrix(float angle_radians) {
                         simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
 }
 
-simd::float4x4 ZRotationMatrix(float angle_radians) {
+simd::float4x4 MakeZRotationMatrix(float angle_radians) {
   const float cos_angle = std::cos(angle_radians);
   const float sin_angle = std::sin(angle_radians);
   return simd::float4x4{simd::float4{cos_angle, sin_angle, 0.0F, 0.0F},

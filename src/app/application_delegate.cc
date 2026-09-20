@@ -20,13 +20,13 @@ ApplicationDelegate::~ApplicationDelegate() {
 }
 
 void ApplicationDelegate::applicationWillFinishLaunching(
-    NS::Notification* notification) {
+    NS::Notification* /*notification*/) {
   NS::Application::sharedApplication()->setActivationPolicy(
       NS::ActivationPolicyRegular);
 }
 
 void ApplicationDelegate::applicationDidFinishLaunching(
-    NS::Notification* notification) {
+    NS::Notification* /*notification*/) {
   device_ = MTL::CreateSystemDefaultDevice();
   assert(device_ != nullptr &&
          "Device creation failed: No system default device.");
@@ -66,6 +66,6 @@ void ApplicationDelegate::applicationDidFinishLaunching(
 }
 
 bool ApplicationDelegate::applicationShouldTerminateAfterLastWindowClosed(
-    NS::Application* sender) {
+    NS::Application* /*sender*/) {
   return true;
 }
