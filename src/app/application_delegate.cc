@@ -46,6 +46,7 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   assert(view_ != nullptr && "Failed to create view.");
 
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
+  view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
   view_->setClearColor(MTL::ClearColor::Make(0.0, 0.0, 0.0, 1.0));
 
   view_delegate_ = new ViewDelegate(device_, view_, scene_);

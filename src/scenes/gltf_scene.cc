@@ -23,6 +23,8 @@ const simd::float3 kWorldUp{0.0F, 1.0F, 0.0F};
 }  // namespace
 
 GltfScene::~GltfScene() {
+  depth_stencil_state_->release();
+  normals_buffer_->release();
   positions_buffer_->release();
   index_buffer_->release();
   pipeline_state_->release();
@@ -61,6 +63,11 @@ void GltfScene::Load(MTL::Device* device) {
 
   index_buffer_ = CreateBuffer(device, model_.indices.data(),
                                model_.indices.size() * sizeof(std::uint32_t));
+
+  normals_buffer_ = CreateBuffer(device, model_.normals.data(),
+                                 model_.normals.size() * sizeof(simd::float3));
+
+  depth_stencil_state_ = CreateDepthStencilState(device);
 }
 
 void GltfScene::Update(float delta) {}
@@ -71,11 +78,14 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder) {
                       simd_mul(view_matrix_, model_.model_matrix))};
 
   command_encoder->setRenderPipelineState(pipeline_state_);
+  command_encoder->setDepthStencilState(depth_stencil_state_);
   command_encoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
   command_encoder->setCullMode(MTL::CullModeNone);
   command_encoder->setVertexBuffer(positions_buffer_, 0, kBufferIndexPositions);
+  command_encoder->setVertexBuffer(normals_buffer_, 0, kBufferIndexNormals);
   command_encoder->setVertexBytes(&uniforms, sizeof(uniforms),
                                   kBufferIndexUniforms);
+
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,
       static_cast<NS::UInteger>(model_.indices.size()), MTL::IndexTypeUInt32,

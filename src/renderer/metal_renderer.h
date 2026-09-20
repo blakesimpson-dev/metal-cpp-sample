@@ -15,6 +15,8 @@ class MetalRenderer : public Renderer {
  public:
   static constexpr MTL::PixelFormat kColorPixelFormat =
       MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB;
+  static constexpr MTL::PixelFormat kDepthPixelFormat =
+      MTL::PixelFormat::PixelFormatDepth32Float;
 
   MetalRenderer(const MetalRenderer&) = delete;
   MetalRenderer& operator=(const MetalRenderer&) = delete;

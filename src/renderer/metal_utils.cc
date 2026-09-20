@@ -41,6 +41,8 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
   pipeline_descriptor->setFragmentFunction(fragment_main);
   pipeline_descriptor->colorAttachments()->object(0)->setPixelFormat(
       MetalRenderer::kColorPixelFormat);
+  pipeline_descriptor->setDepthAttachmentPixelFormat(
+      MetalRenderer::kDepthPixelFormat);
 
   NS::Error* pipeline_state_error = nullptr;
   MTL::RenderPipelineState* pipeline_state = device->newRenderPipelineState(
@@ -68,4 +70,18 @@ MTL::Buffer* CreateBuffer(MTL::Device* device, const void* data,
          "Buffer creation failed: Metal could not allocate the buffer.");
 
   return buffer;
+}
+
+MTL::DepthStencilState* CreateDepthStencilState(MTL::Device* device) {
+  MTL::DepthStencilDescriptor* depth_stencil_descriptor =
+      MTL::DepthStencilDescriptor::alloc()->init();
+
+  depth_stencil_descriptor->setDepthCompareFunction(MTL::CompareFunctionLess);
+  depth_stencil_descriptor->setDepthWriteEnabled(true);
+
+  MTL::DepthStencilState* depth_stencil_state =
+      device->newDepthStencilState(depth_stencil_descriptor);
+
+  depth_stencil_descriptor->release();
+  return depth_stencil_state;
 }

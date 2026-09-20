@@ -11,3 +11,6 @@ MTL::RenderPipelineState* CreateRenderPipelineState(
 // NOTE: Copies into new buffer, caller owns the result and must release() it
 MTL::Buffer* CreateBuffer(MTL::Device* device, const void* data,
                           std::size_t length);
+
+// NOTE: Same as above... caller must release()
+MTL::DepthStencilState* CreateDepthStencilState(MTL::Device* device);
