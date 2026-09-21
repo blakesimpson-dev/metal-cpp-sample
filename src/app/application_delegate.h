@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AppKit/AppKit.hpp>
+#include <memory>
 
 // NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
 namespace MTL {
@@ -39,5 +40,5 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
   NS::Window* window_ = nullptr;
   MTK::View* view_ = nullptr;
   Scene* scene_;
-  ViewDelegate* view_delegate_ = nullptr;
+  std::unique_ptr<ViewDelegate> view_delegate_;
 };

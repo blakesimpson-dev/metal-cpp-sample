@@ -6,6 +6,7 @@
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>
 #include <iostream>
+#include <memory>
 
 #include "app/view_delegate.h"
 #include "renderer/metal_renderer.h"
@@ -16,7 +17,6 @@ ApplicationDelegate::~ApplicationDelegate() {
   view_->release();
   window_->release();
   device_->release();
-  delete view_delegate_;
 }
 
 void ApplicationDelegate::applicationWillFinishLaunching(
@@ -49,8 +49,8 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
 
-  view_delegate_ = new ViewDelegate(device_, view_, scene_);
-  view_->setDelegate(view_delegate_);
+  view_delegate_ = std::make_unique<ViewDelegate>(device_, view_, scene_);
+  view_->setDelegate(view_delegate_.get());
 
   window_->setContentView(view_);
   window_->setTitle(
