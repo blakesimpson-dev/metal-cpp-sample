@@ -1,12 +1,12 @@
 # metal-cpp-sample
 
-A learning project in C++20 and Apple's Metal (via metal-cpp): a small renderer
-that loads a glTF model and shades it with a perspective camera, depth testing
-and PBR inspired lighting. It was built to learn the metal-cpp API, modern C++
-and the structure of a real-time renderer by applying them together, growing
-from a single triangle one deliberate design decision at a time. The scope is
-intentionally small, one model and no textures, so every part can be understood
-and explained. The commit history follows and documents that progression.
+A learning project in C++20 and Apple's Metal API (metal-cpp). A small renderer
+that loads a glTF model and shades it with a perspective camera, depth testing, 
+PBR inspired lighting and procedural bump mapping.
+
+The scope is intentionally small, one model and no textures, so that every part 
+can be understood and explained. The trajectory of my learning as well as the 
+progression from a single tri to the final scene, is tracked in commit history.
 
 | glTF scene (`--scene=gltf`) | Minimal scene (`--scene=minimal`) |
 |:---:|:---:|
