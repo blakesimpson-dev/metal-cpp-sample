@@ -16,6 +16,8 @@ MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
       scene_(scene) {
   assert(command_queue_ &&
          "Command queue creation failed: Could not initialize.");
+  assert(device_->supportsTextureSampleCount(MetalRenderer::SampleCount()) &&
+         "Sample count check failed: Device does not support this MSAA level.");
 
   scene_->Load(device_.get());
   scene_->ConfigureCamera(camera_);
