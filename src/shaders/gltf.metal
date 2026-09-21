@@ -8,25 +8,27 @@ constant constexpr float kFresnelPower = 5.0F;
 constant constexpr float kHorizonBlendWidth = 0.08F;
 
 struct VertexOut {
-  float4 position [[position]];
+  float3 model_position;
+  float3 model_normal;
+  float4 clip_position [[position]];
   float3 world_position;
   float3 world_normal;
 };
 
 VertexOut vertex GltfVertexMain(uint vertex_id [[vertex_id]],
-                                device const float3* positions
+                                device const float3* model_positions
                                 [[buffer(kBufferIndexPositions)]],
                                 constant Uniforms& uniforms
                                 [[buffer(kBufferIndexUniforms)]],
-                                device const float3* normals
+                                device const float3* model_normals
                                 [[buffer(kBufferIndexNormals)]]) {
   VertexOut out;
-  const float4 position = float4(positions[vertex_id], 1.0F);
-
-  out.position = uniforms.mvp * position;
-  out.world_position = (uniforms.world_matrix * position).xyz;
-  out.world_normal = uniforms.normal_matrix * normals[vertex_id];
-
+  out.model_position = model_positions[vertex_id];
+  out.model_normal = model_normals[vertex_id];
+  out.clip_position = uniforms.mvp * float4(out.model_position, 1.0F);
+  out.world_position =
+      (uniforms.world_matrix * float4(out.model_position, 1.0F)).xyz;
+  out.world_normal = uniforms.normal_matrix * out.model_normal;
   return out;
 }
 
