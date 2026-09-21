@@ -3,7 +3,7 @@
 #include <cmath>
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera
-// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape
+// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape.
 simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
                               const simd::float3& target_position,
                               const simd::float3& world_up) {
@@ -23,7 +23,7 @@ simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
                    simd::dot(camera_forward, camera_position), 1.0F}};
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape.
 simd::float4x4 MakeProjectionMatrix(float fov_y_radians, float aspect_ratio,
                                     float near_z_distance,
                                     float far_z_distance) {
@@ -55,7 +55,7 @@ simd::float4x4 MakeTranslationMatrix(const simd::float3& offset) {
 }
 
 // TODO(Blake): Look at GLM's implementation, it allows for a unit axis. See
-// about applying the same approach here
+// about applying the same approach here.
 simd::float4x4 MakeXRotationMatrix(float angle_radians) {
   const float cos_angle = std::cos(angle_radians);
   const float sin_angle = std::sin(angle_radians);

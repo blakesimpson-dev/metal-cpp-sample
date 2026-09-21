@@ -4,10 +4,10 @@
 
 class Camera {
  public:
-  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape
+  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape.
   void SetLookAt(const simd::float3& camera_position,
                  const simd::float3& target_position);
-  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape
+  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape.
   void SetPerspective(float fov_y_radians, float near_z_distance,
                       float far_z_distance);
   void SetAspectRatio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
