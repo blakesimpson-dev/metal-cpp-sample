@@ -31,6 +31,8 @@ constexpr float kAmbientIntensity = 0.0375F;
 constexpr float kEnvironmentIntensity = 1.125F;
 constexpr float kSpecularIntensity = 10.0F;
 constexpr float kSpecularExponent = 15.0F;
+constexpr float kBumpStrength = 0.08F;
+constexpr float kBumpFrequency = 15.0F;
 
 MTL::ClearColor DisplayClearColor(double red, double green, double blue) {
   return MTL::ClearColor::Make(std::pow(red, 2.2), std::pow(green, 2.2),
@@ -105,6 +107,8 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       .specular_intensity = kSpecularIntensity,
       .specular_exponent = kSpecularExponent,
       .metallic_factor = model_.metallic_factor,
+      .bump_strength = kBumpStrength,
+      .bump_frequency = kBumpFrequency,
   };
 
   command_encoder->setRenderPipelineState(pipeline_state_.get());
