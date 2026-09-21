@@ -9,14 +9,15 @@
 #include <memory>
 
 #include "app/view_delegate.h"
+#include "platform/metal_ptr.h"
 #include "renderer/metal_renderer.h"
 
 ApplicationDelegate::ApplicationDelegate(Scene* scene) : scene_(scene) {}
 
 ApplicationDelegate::~ApplicationDelegate() {
-  view_->release();
-  window_->release();
-  device_->release();
+  if (view_) {
+    view_->setDelegate(nullptr);
+  }
 }
 
 void ApplicationDelegate::applicationWillFinishLaunching(
@@ -27,9 +28,8 @@ void ApplicationDelegate::applicationWillFinishLaunching(
 
 void ApplicationDelegate::applicationDidFinishLaunching(
     NS::Notification* /*notification*/) {
-  device_ = MTL::CreateSystemDefaultDevice();
-  assert(device_ != nullptr &&
-         "Device creation failed: No system default device.");
+  device_ = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
+  assert(device_ && "Device creation failed: No system default device.");
 
   const CGRect content_rect{{kWindowOriginX, kWindowOriginY},
                             {kWindowWidth, kWindowHeight}};
@@ -39,22 +39,22 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   const bool defer_onscreen_allocation = false;
 
   window_ =
-      NS::Window::alloc()->init(content_rect, window_style_mask, window_backing,
-                                defer_onscreen_allocation);
-  assert(window_ != nullptr && "Window creation failed: Could not initialize.");
+      CreateMetalObject<NS::Window>(content_rect, window_style_mask,
+                                    window_backing, defer_onscreen_allocation);
+  assert(window_ && "Window creation failed: Could not initialize.");
 
-  view_ = MTK::View::alloc()->init(content_rect, device_);
-  assert(view_ != nullptr && "View creation failed: Could not initialize.");
+  view_ = CreateMetalObject<MTK::View>(content_rect, device_.get());
+  assert(view_ && "View creation failed: Could not initialize.");
 
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
 
-  view_delegate_ = std::make_unique<ViewDelegate>(device_, view_, scene_);
+  view_delegate_ =
+      std::make_unique<ViewDelegate>(device_.get(), view_.get(), scene_);
   view_->setDelegate(view_delegate_.get());
 
-  window_->setContentView(view_);
-  window_->setTitle(
-      NS::String::string(kWindowTitle, NS::StringEncoding::UTF8StringEncoding));
+  window_->setContentView(view_.get());
+  window_->setTitle(ToNsString(kWindowTitle));
   window_->makeKeyAndOrderFront(nullptr);
 
   NS::Application::sharedApplication()->activateIgnoringOtherApps(true);

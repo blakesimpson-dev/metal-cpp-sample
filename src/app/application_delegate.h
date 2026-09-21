@@ -3,15 +3,7 @@
 #include <AppKit/AppKit.hpp>
 #include <memory>
 
-// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
-namespace MTL {
-class Device;
-}
-
-// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp
-namespace MTK {
-class View;
-}
+#include "platform/metal_ptr.h"
 
 class Scene;
 class ViewDelegate;
@@ -27,18 +19,23 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
   ApplicationDelegate(const ApplicationDelegate&) = delete;
   ApplicationDelegate& operator=(const ApplicationDelegate&) = delete;
   explicit ApplicationDelegate(Scene* scene);
+
   ~ApplicationDelegate() override;
+
   void applicationWillFinishLaunching(
       NS::Notification* /*notification*/) override;
+
   void applicationDidFinishLaunching(
       NS::Notification* /*notification*/) override;
+
   bool applicationShouldTerminateAfterLastWindowClosed(
       NS::Application* /*sender*/) override;
 
  private:
-  MTL::Device* device_ = nullptr;
-  NS::Window* window_ = nullptr;
-  MTK::View* view_ = nullptr;
+  DevicePtr device_;
+  WindowPtr window_;
+  ViewPtr view_;
+
   Scene* scene_;
   std::unique_ptr<ViewDelegate> view_delegate_;
 };

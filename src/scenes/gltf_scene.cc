@@ -7,6 +7,7 @@
 #include <numbers>
 
 #include "platform/executable_path.h"
+#include "platform/metal_ptr.h"
 #include "renderer/camera.h"
 #include "renderer/math_utils.h"
 #include "renderer/metal_utils.h"
@@ -18,15 +19,17 @@ constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";
 constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
+
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
 const simd::float3 kRotationSpeeds{0.25F, 0.125F, 0.09375F};
+
 const simd::float3 kLightDirection{
     simd::normalize(simd::float3{-0.625F, 0.625F, 0.375F})};
 const simd::float3 kSkyColor{0.7F, 0.5F, 0.22F};
 const simd::float3 kGroundColor{0.08F, 0.01F, 0.006F};
 constexpr float kAmbientIntensity = 0.0375F;
-constexpr float kEnvironmentIntensity = 1.25F;
-constexpr float kSpecularIntensity = 6.0F;
+constexpr float kEnvironmentIntensity = 1.125F;
+constexpr float kSpecularIntensity = 10.0F;
 constexpr float kSpecularExponent = 15.0F;
 
 MTL::ClearColor DisplayClearColor(double red, double green, double blue) {
@@ -36,14 +39,6 @@ MTL::ClearColor DisplayClearColor(double red, double green, double blue) {
 
 const MTL::ClearColor kSceneClearColor = DisplayClearColor(0.09, 0.055, 0.035);
 }  // namespace
-
-GltfScene::~GltfScene() {
-  normals_buffer_->release();
-  index_buffer_->release();
-  positions_buffer_->release();
-  depth_stencil_state_->release();
-  pipeline_state_->release();
-}
 
 void GltfScene::Load(MTL::Device* device) {
   const std::filesystem::path model_directory_path =
@@ -112,13 +107,15 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       .metallic_factor = model_.metallic_factor,
   };
 
-  command_encoder->setRenderPipelineState(pipeline_state_);
-  command_encoder->setDepthStencilState(depth_stencil_state_);
+  command_encoder->setRenderPipelineState(pipeline_state_.get());
+  command_encoder->setDepthStencilState(depth_stencil_state_.get());
   command_encoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
   command_encoder->setCullMode(MTL::CullModeNone);
 
-  command_encoder->setVertexBuffer(positions_buffer_, 0, kBufferIndexPositions);
-  command_encoder->setVertexBuffer(normals_buffer_, 0, kBufferIndexNormals);
+  command_encoder->setVertexBuffer(positions_buffer_.get(), 0,
+                                   kBufferIndexPositions);
+  command_encoder->setVertexBuffer(normals_buffer_.get(), 0,
+                                   kBufferIndexNormals);
 
   command_encoder->setVertexBytes(&uniforms, sizeof(uniforms),
                                   kBufferIndexUniforms);
@@ -129,7 +126,7 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,
       static_cast<NS::UInteger>(model_.indices.size()), MTL::IndexTypeUInt32,
-      index_buffer_, 0);
+      index_buffer_.get(), 0);
 }
 
 void GltfScene::ConfigureCamera(Camera& camera) const {

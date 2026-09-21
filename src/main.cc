@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include "app/application_delegate.h"
+#include "platform/metal_ptr.h"
 #include "scenes/gltf_scene.h"
 #include "scenes/minimal_scene.h"
 
@@ -12,8 +13,7 @@ constexpr std::string_view kSceneFlag = "--scene=";
 }
 
 int main(int argc, char* argv[]) {
-  NS::SharedPtr<NS::AutoreleasePool> pool =
-      NS::TransferPtr(NS::AutoreleasePool::alloc()->init());
+  AutoreleasePoolPtr pool = CreateMetalObject<NS::AutoreleasePool>();
 
   std::string_view scene_name = "gltf";
   for (int i = 1; i < argc; ++i) {
