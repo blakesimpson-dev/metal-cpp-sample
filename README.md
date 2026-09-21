@@ -18,6 +18,8 @@ and explained. The commit history follows and documents that progression.
 - Perspective camera framed from the model's bounding sphere
 - Depth buffer, Lambert diffuse, Blinn-Phong specular
 - PBR inspired materials with Fresnel and procedural environment reflection
+- Procedural noise bump mapping (surface gradient method, no UVs)
+- 4x MSAA, switchable with `--msaa`
 - Frame-delta animation
 
 ## Build and run
@@ -32,8 +34,13 @@ git clone --recursive \
 cd metal-cpp-sample
 cmake -S . -B build -G Ninja
 cmake --build build
-./build/metal-cpp-sample [--scene=gltf|minimal]
+./build/metal-cpp-sample [--scene=gltf|minimal] [--msaa=on|off]
 ```
+
+| Option     | Values                  | Default |
+|------------|-------------------------|---------|
+| `--scene=` | `gltf`, `minimal`       | `gltf`  |
+| `--msaa=`  | `on` (4 samples), `off` | `on`    |
 
 ## Layout
 
@@ -43,7 +50,7 @@ cmake --build build
 | `src/renderer`  | Metal renderer, camera, math and Metal helpers           |
 | `src/scenes`    | `Scene` interface, glTF loader, glTF and minimal scenes  |
 | `src/shaders`   | Metal shaders and C++/shader shared types                |
-| `src/platform`  | Executable path lookup                                   |
+| `src/platform`  | Executable path lookup, metal-cpp ownership helpers      |
 | `assets`        | glTF model (Exalted Orb, see Credits)                    |
 | `docs`          | README images                                            |
 | `external`      | Dependencies (see below)                                 |
@@ -72,10 +79,13 @@ for explanations, code review and tooling configuration.
 - [Apple: metal-cpp](https://developer.apple.com/metal/cpp/) and the
   ["Learn Metal with C++" samples](https://developer.apple.com/metal/LearnMetalCPP.zip)
 - [fastgltf](https://github.com/spnda/fastgltf) documentation and headers
-- [glTF 2.0 specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) (Khronos)
+- [glTF 2.0 specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html)
 - LearnOpenGL:
   [Camera](https://learnopengl.com/Getting-started/Camera),
   [Basic Lighting](https://learnopengl.com/Lighting/Basic-Lighting),
   [Advanced Lighting](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)
 - [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html)
 - [learncpp.com](https://www.learncpp.com/)
+- [Bump Mapping Unparametrized Surfaces on the GPU by Morten S. Mikkelsen](https://mmikk.github.io/papers3d/mm_sfgrad_bump.pdf)
+- [three.js `bumpmap_pars_fragment.glsl.js`](https://github.com/mrdoob/three.js/blob/dev/src/renderers/shaders/ShaderChunk/bumpmap_pars_fragment.glsl.js)
+- [The Book of Shaders: Noise](https://thebookofshaders.com/11/)
