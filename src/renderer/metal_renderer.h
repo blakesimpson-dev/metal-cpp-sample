@@ -7,11 +7,6 @@
 #include "renderer/camera.h"
 #include "renderer/renderer.h"
 
-// NOLINTNEXTLINE(readability-identifier-naming): Matches against metal-cpp.
-namespace MTK {
-class View;
-}
-
 class Scene;
 
 class MetalRenderer : public Renderer {
@@ -27,7 +22,18 @@ class MetalRenderer : public Renderer {
 
   void Draw() override;
 
+  static void SetMsaaEnabled(bool enabled) { msaa_enabled_ = enabled; }
+
+  [[nodiscard]]
+  static NS::UInteger SampleCount() {
+    return msaa_enabled_ ? kMsaaMaxSampleCount : kMsaaMinSampleCount;
+  }
+
  private:
+  static inline bool msaa_enabled_ = true;
+  static constexpr NS::UInteger kMsaaMinSampleCount = 1;
+  static constexpr NS::UInteger kMsaaMaxSampleCount = 4;
+
   DevicePtr device_;
   CommandQueuePtr command_queue_;
 

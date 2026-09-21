@@ -49,6 +49,9 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
 
+  const NS::UInteger sample_count = MetalRenderer::SampleCount();
+  view_->setSampleCount(sample_count);
+
   view_delegate_ =
       std::make_unique<ViewDelegate>(device_.get(), view_.get(), scene_);
   view_->setDelegate(view_delegate_.get());
@@ -62,7 +65,7 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   const char* device_name = device_->name()->utf8String();
   std::cout << "'" << kWindowTitle << "' running using " << device_name << " ("
             << (device_->hasUnifiedMemory() ? "Integrated" : "Dedicated")
-            << " GPU)\n";
+            << " GPU). MSAA: " << MetalRenderer::SampleCount() << " samples\n";
 }
 
 bool ApplicationDelegate::applicationShouldTerminateAfterLastWindowClosed(

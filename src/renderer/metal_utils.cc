@@ -55,6 +55,7 @@ PipelineStatePtr CreateRenderPipelineState(MTL::Device* device,
       MetalRenderer::kColorPixelFormat);
   pipeline_descriptor->setDepthAttachmentPixelFormat(
       MetalRenderer::kDepthPixelFormat);
+  pipeline_descriptor->setRasterSampleCount(MetalRenderer::SampleCount());
 
   NS::Error* pipeline_state_error = nullptr;
   PipelineStatePtr pipeline_state = TransferPtr(device->newRenderPipelineState(
