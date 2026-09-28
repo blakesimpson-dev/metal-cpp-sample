@@ -1,13 +1,12 @@
-#include <AppKit/AppKit.hpp>
-#include <cassert>
-#include <memory>
-#include <string_view>
-
 #include "app/application_delegate.h"
 #include "platform/metal_ptr.h"
 #include "renderer/metal_renderer.h"
 #include "scenes/gltf_scene.h"
 #include "scenes/minimal_scene.h"
+#include <AppKit/AppKit.hpp>
+#include <cassert>
+#include <memory>
+#include <string_view>
 
 namespace {
 constexpr std::string_view kSceneFlag = "--scene=";

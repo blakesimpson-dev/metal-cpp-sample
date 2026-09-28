@@ -1,5 +1,4 @@
 #include "renderer/math_utils.h"
-
 #include <cmath>
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera
@@ -18,9 +17,12 @@ simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
       simd::float4{camera_right.x, camera_up.x, -camera_forward.x, 0.0F},
       simd::float4{camera_right.y, camera_up.y, -camera_forward.y, 0.0F},
       simd::float4{camera_right.z, camera_up.z, -camera_forward.z, 0.0F},
-      simd::float4{-simd::dot(camera_right, camera_position),
-                   -simd::dot(camera_up, camera_position),
-                   simd::dot(camera_forward, camera_position), 1.0F}};
+      simd::float4{
+          -simd::dot(camera_right, camera_position),
+          -simd::dot(camera_up, camera_position),
+          simd::dot(camera_forward, camera_position),
+          1.0F,
+      }};
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape.

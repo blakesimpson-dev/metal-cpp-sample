@@ -16,11 +16,11 @@ struct VertexOut {
 };
 
 VertexOut vertex GltfVertexMain(uint vertex_id [[vertex_id]],
-                                device const float3* model_positions
+                                const device float3* model_positions
                                 [[buffer(kBufferIndexPositions)]],
                                 constant Uniforms& uniforms
                                 [[buffer(kBufferIndexUniforms)]],
-                                device const float3* model_normals
+                                const device float3* model_normals
                                 [[buffer(kBufferIndexNormals)]]) {
   VertexOut out;
   out.model_position = model_positions[vertex_id];

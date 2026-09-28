@@ -1,7 +1,5 @@
 #include "platform/executable_path.h"
-
 #include <mach-o/dyld.h>
-
 #include <cstdint>
 #include <filesystem>
 #include <vector>

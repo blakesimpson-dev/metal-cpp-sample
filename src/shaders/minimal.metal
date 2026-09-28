@@ -9,9 +9,9 @@ struct VertexOut {
 };
 
 VertexOut vertex VertexMain(uint vertex_id [[vertex_id]],
-                            device const float3* clip_positions
+                            const device float3* clip_positions
                             [[buffer(kBufferIndexPositions)]],
-                            device const float3* colors
+                            const device float3* colors
                             [[buffer(kBufferIndexColors)]]) {
   VertexOut out;
   out.clip_position = float4(clip_positions[vertex_id], 1.0);

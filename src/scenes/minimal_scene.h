@@ -1,10 +1,11 @@
-#pragma once
 
-#include <Metal/Metal.hpp>
-#include <cstddef>
+#ifndef METAL_CPP_SAMPLE_SCENES_MINIMAL_SCENE_H_
+#define METAL_CPP_SAMPLE_SCENES_MINIMAL_SCENE_H_
 
 #include "platform/metal_ptr.h"
 #include "scenes/scene.h"
+#include <Metal/Metal.hpp>
+#include <cstddef>
 
 class MinimalScene : public Scene {
  public:
@@ -25,3 +26,5 @@ class MinimalScene : public Scene {
   BufferPtr colors_buffer_;
   size_t vertex_count_ = 0;
 };
+
+#endif  // METAL_CPP_SAMPLE_SCENES_MINIMAL_SCENE_H_

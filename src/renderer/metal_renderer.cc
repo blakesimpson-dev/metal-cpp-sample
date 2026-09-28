@@ -1,13 +1,10 @@
 #include "renderer/metal_renderer.h"
-
+#include "platform/metal_ptr.h"
+#include "scenes/scene.h"
 #include <CoreFoundation/CFCGTypes.h>
-
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>
 #include <chrono>
-
-#include "platform/metal_ptr.h"
-#include "scenes/scene.h"
 
 MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
     : device_(NS::RetainPtr(device)),

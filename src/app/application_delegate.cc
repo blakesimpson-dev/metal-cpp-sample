@@ -1,16 +1,13 @@
 #include "app/application_delegate.h"
-
+#include "app/view_delegate.h"
+#include "platform/metal_ptr.h"
+#include "renderer/metal_renderer.h"
 #include <CoreFoundation/CFCGTypes.h>
-
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 #include <cassert>
 #include <iostream>
 #include <memory>
-
-#include "app/view_delegate.h"
-#include "platform/metal_ptr.h"
-#include "renderer/metal_renderer.h"
 
 ApplicationDelegate::ApplicationDelegate(Scene* scene) : scene_(scene) {}
 
@@ -31,8 +28,10 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   device_ = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
   assert(device_ && "Device creation failed: No system default device.");
 
-  const CGRect content_rect{{kWindowOriginX, kWindowOriginY},
-                            {kWindowWidth, kWindowHeight}};
+  const CGRect content_rect{
+      .origin = {.x = kWindowOriginX, .y = kWindowOriginY},
+      .size = {.width = kWindowWidth, .height = kWindowHeight},
+  };
   const NS::WindowStyleMask window_style_mask =
       NS::WindowStyleMaskTitled | NS::WindowStyleMaskClosable;
   const NS::BackingStoreType window_backing = NS::BackingStoreBuffered;

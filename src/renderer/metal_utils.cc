@@ -1,13 +1,11 @@
 #include "renderer/metal_utils.h"
-
+#include "platform/executable_path.h"
+#include "platform/metal_ptr.h"
+#include "renderer/metal_renderer.h"
 #include <cassert>
 #include <cstddef>
 #include <iostream>
 #include <string>
-
-#include "platform/executable_path.h"
-#include "platform/metal_ptr.h"
-#include "renderer/metal_renderer.h"
 
 using NS::TransferPtr;
 
@@ -76,6 +74,15 @@ BufferPtr CreateBuffer(MTL::Device* device, const void* data,
       device->hasUnifiedMemory() ? MTL::ResourceStorageModeShared
                                  : MTL::ResourceStorageModeManaged;
   MTL::Buffer* buffer = device->newBuffer(data, length, storage_mode);
+  assert(buffer != nullptr &&
+         "Buffer creation failed: Metal could not allocate the buffer.");
+
+  return TransferPtr(buffer);
+}
+
+BufferPtr CreateSharedBuffer(MTL::Device* device, std::size_t length) {
+  MTL::Buffer* buffer =
+      device->newBuffer(length, MTL::ResourceStorageModeShared);
   assert(buffer != nullptr &&
          "Buffer creation failed: Metal could not allocate the buffer.");
 

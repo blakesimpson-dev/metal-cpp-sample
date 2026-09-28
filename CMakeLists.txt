@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
+set(CMAKE_OSX_SYSROOT macosx CACHE STRING "macOS SDK")
+
 project(metal-cpp-sample)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -73,9 +75,10 @@ target_sources(
 
 target_include_directories(
   ${PROJECT_NAME}
-  SYSTEM PRIVATE external/metal-cpp external/metal-cpp-extensions
-  PRIVATE src
+  SYSTEM
+  PRIVATE external/metal-cpp external/metal-cpp-extensions
 )
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wextra-semi)
 

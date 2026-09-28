@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_RENDERER_CAMERA_H_
+#define METAL_CPP_SAMPLE_RENDERER_CAMERA_H_
 
 #include <simd/simd.h>
 
@@ -28,3 +30,5 @@ class Camera {
   float near_z_distance_ = 0.0F;
   float far_z_distance_ = 0.0F;
 };
+
+#endif  // METAL_CPP_SAMPLE_RENDERER_CAMERA_H_
