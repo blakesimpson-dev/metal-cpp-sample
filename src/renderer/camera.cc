@@ -1,4 +1,5 @@
 #include "renderer/camera.h"
+
 #include "renderer/math_utils.h"
 
 namespace {

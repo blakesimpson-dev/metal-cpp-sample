@@ -1,11 +1,15 @@
 #include "scenes/minimal_scene.h"
+
+#include <simd/simd.h>
+
+#include <array>
+#include <cstddef>
+#include <iterator>
+
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
 #include "renderer/metal_utils.h"
 #include "shaders/shader_types.h"
-#include <simd/simd.h>
-#include <array>
-#include <iterator>
 
 namespace {
 constexpr const char* kVertexShaderFunctionName = "VertexMain";
@@ -40,7 +44,7 @@ void MinimalScene::Load(MTL::Device* device) {
 void MinimalScene::Update(float /*delta*/) {}
 
 void MinimalScene::Draw(MTL::RenderCommandEncoder* command_encoder,
-                        const Camera& /*camera*/) {
+                        const Camera& /*camera*/, std::size_t /*frame_index*/) {
   command_encoder->setRenderPipelineState(pipeline_state_.get());
   command_encoder->setVertexBuffer(positions_buffer_.get(), 0,
                                    kBufferIndexPositions);

@@ -1,8 +1,5 @@
 #include "gltf_model.h"
-#include <fastgltf/core.hpp>
-#include <fastgltf/math.hpp>
-#include <fastgltf/tools.hpp>
-#include <fastgltf/types.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -12,6 +9,11 @@
 #include <optional>
 #include <string_view>
 #include <vector>
+
+#include <fastgltf/core.hpp>
+#include <fastgltf/math.hpp>
+#include <fastgltf/tools.hpp>
+#include <fastgltf/types.hpp>
 
 namespace {
 struct MeshInstance {

@@ -1,12 +1,12 @@
-
 #ifndef METAL_CPP_SAMPLE_PLATFORM_METAL_PTR_H_
 #define METAL_CPP_SAMPLE_PLATFORM_METAL_PTR_H_
+
+#include <utility>
 
 #include <AppKit/AppKit.hpp>
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
-#include <utility>
 
 template <class T>
 using MetalPtr = NS::SharedPtr<T>;

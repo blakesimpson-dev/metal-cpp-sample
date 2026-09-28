@@ -1,9 +1,9 @@
-
 #ifndef METAL_CPP_SAMPLE_APP_VIEW_DELEGATE_H_
 #define METAL_CPP_SAMPLE_APP_VIEW_DELEGATE_H_
 
-#include <MetalKit/MetalKit.hpp>
 #include <memory>
+
+#include <MetalKit/MetalKit.hpp>
 
 class MetalRenderer;
 class Scene;

@@ -1,10 +1,11 @@
-
 #ifndef METAL_CPP_SAMPLE_APP_APPLICATION_DELEGATE_H_
 #define METAL_CPP_SAMPLE_APP_APPLICATION_DELEGATE_H_
 
-#include "platform/metal_ptr.h"
-#include <AppKit/AppKit.hpp>
 #include <memory>
+
+#include <AppKit/AppKit.hpp>
+
+#include "platform/metal_ptr.h"
 
 class Scene;
 class ViewDelegate;

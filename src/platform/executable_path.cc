@@ -1,8 +1,10 @@
 #include "platform/executable_path.h"
-#include <mach-o/dyld.h>
+
 #include <cstdint>
 #include <filesystem>
 #include <vector>
+
+#include <mach-o/dyld.h>
 
 std::filesystem::path ExecutableDirectoryPath() {
   uint32_t size = 0;
