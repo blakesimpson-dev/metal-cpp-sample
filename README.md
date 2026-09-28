@@ -25,18 +25,6 @@ lighting and procedural bump mapping.
 - **Rendering:** depth buffer, 4x MSAA (switchable with `--msaa`)
 - **Animation:** frame-delta turntable rotation with bounded tilt
 
-## Frames in flight
-
-Up to 3 frames can be in flight at once, each with its own uniform buffers. A
-semaphore stops the CPU from reusing a buffer the GPU is still reading; the
-command buffer's completed handler releases it.
-
-Earlier versions used `setVertexBytes`/`setFragmentBytes`. Under 4 KB, Metal
-manages a temp buffer, so no sync is needed. The ring buffer is the pattern that
-scales past that
-([Triple Buffering](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/TripleBuffering.html),
-[Buffer Bindings](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/BufferBindings.html)).
-
 ## Build and run
 
 Requires macOS, Xcode (with the Metal toolchain) and CMake 3.26+. Tested with
@@ -102,6 +90,8 @@ review and tooling configuration.
   [Mikkelsen, "Bump Mapping Unparametrized Surfaces on the GPU"](https://mmikk.github.io/papers3d/mm_sfgrad_bump.pdf),
   [three.js `bumpmap_pars_fragment`](https://github.com/mrdoob/three.js/blob/dev/src/renderers/shaders/ShaderChunk/bumpmap_pars_fragment.glsl.js),
   [The Book of Shaders: Noise](https://thebookofshaders.com/11/)
+- [Triple Buffering](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/TripleBuffering.html)
+- [Buffer Bindings](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/BufferBindings.html)
 - C++:
   [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html),
   [learncpp.com](https://www.learncpp.com/)
