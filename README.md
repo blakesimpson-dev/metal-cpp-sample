@@ -5,9 +5,9 @@
 ![macOS](https://img.shields.io/badge/macOS-27-000000?logo=apple&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-A small C++20 renderer on Apple's Metal (metal-cpp). It loads a glTF model and
-renders it with a perspective camera, depth testing, PBR-inspired lighting and
-procedural bump mapping.
+Render pipeline sample in C++20, using Apple's Metal API. The program loads a
+glTF model and renders it with a perspective camera, depth testing, PBR-inspired
+lighting and procedural bump mapping.
 
 |     glTF scene (`--scene=gltf`)     |   Minimal scene (`--scene=minimal`)   |
 | :---------------------------------: | :-----------------------------------: |
