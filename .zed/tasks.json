@@ -1,14 +1,12 @@
 [
     {
         "label": "Lint",
-        // "command": "run-clang-tidy -quiet -p build 'src/.*\\.cc$'",
         "command": "run-clang-tidy -quiet -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
         "cwd": "$ZED_WORKTREE_ROOT",
         "reveal": "always",
     },
     {
         "label": "Lint: fix",
-        // "command": "run-clang-tidy -quiet -fix -format -p build 'src/.*\\.cc$'",
         "command": "run-clang-tidy -quiet -fix -format -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
         "cwd": "$ZED_WORKTREE_ROOT",
         "reveal": "always",
