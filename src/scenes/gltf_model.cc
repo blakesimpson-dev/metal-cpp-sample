@@ -87,7 +87,6 @@ std::vector<std::uint32_t> ReadIndices(const fastgltf::Asset& asset,
 
 simd::float4x4 ToSimdFloat4x4(const fastgltf::math::fmat4x4& matrix) {
   simd::float4x4 out;
-  // NOLINTNEXTLINE(modernize-loop-convert): col indexes both matrices.
   for (int col = 0; col < 4; ++col) {
     for (int row = 0; row < 4; ++row) {
       out.columns[col][row] = matrix[col][row];
