@@ -2,11 +2,9 @@
 #include <cmath>
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera
-// NOLINTBEGIN(bugprone-easily-swappable-parameters): Conventional shape.
 simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
                               const simd::float3& target_position,
                               const simd::float3& world_up) {
-  // NOLINTEND(bugprone-easily-swappable-parameters)
   const simd::float3 camera_forward =
       simd::normalize(target_position - camera_position);
   const simd::float3 camera_right =
@@ -25,7 +23,6 @@ simd::float4x4 MakeViewMatrix(const simd::float3& camera_position,
       }};
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): Conventional shape.
 simd::float4x4 MakeProjectionMatrix(float fov_y_radians, float aspect_ratio,
                                     float near_z_distance,
                                     float far_z_distance) {
