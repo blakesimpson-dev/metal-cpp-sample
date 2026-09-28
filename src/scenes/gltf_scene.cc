@@ -1,16 +1,21 @@
 #include "scenes/gltf_scene.h"
+
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <filesystem>
+#include <iostream>
+#include <numbers>
+
 #include "platform/executable_path.h"
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
+#include "renderer/frames_in_flight.h"
 #include "renderer/math_utils.h"
 #include "renderer/metal_utils.h"
 #include "scenes/gltf_model.h"
 #include "shaders/shader_types.h"
-#include <cmath>
-#include <cstdint>
-#include <filesystem>
-#include <iostream>
-#include <numbers>
 
 namespace {
 constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";
@@ -18,8 +23,12 @@ constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
-const simd::float3 kRotationSpeeds{0.25F, 0.125F, 0.09375F};
-const simd::float3 kLightDirection{-0.625F, 0.625F, 0.375F};
+constexpr float kTwoPi = 2.0F * std::numbers::pi_v<float>;
+constexpr float kYawSpeed = 0.35F;
+constexpr float kTiltAmplitudeRadians =
+    15.0F * std::numbers::pi_v<float> / 180.0F;
+constexpr float kTiltSpeed = 0.5F;
+const simd::float3 kLightDirection{-0.650945F, 0.650945F, 0.390567F};
 const simd::float3 kSkyColor{0.7F, 0.5F, 0.22F};
 const simd::float3 kGroundColor{0.08F, 0.01F, 0.006F};
 constexpr float kAmbientIntensity = 0.0375F;
@@ -55,29 +64,35 @@ void GltfScene::Load(MTL::Device* device) {
   positions_buffer_ =
       CreateBuffer(device, model_.positions.data(),
                    model_.positions.size() * sizeof(simd::float3));
-
   index_buffer_ = CreateBuffer(device, model_.indices.data(),
                                model_.indices.size() * sizeof(std::uint32_t));
-
   normals_buffer_ = CreateBuffer(device, model_.normals.data(),
                                  model_.normals.size() * sizeof(simd::float3));
+
+  for (std::size_t i = 0; i < kMaxFramesInFlight; i++) {
+    uniform_buffers_[i] = CreateSharedBuffer(device, sizeof(Uniforms));
+    fragment_uniform_buffers_[i] =
+        CreateSharedBuffer(device, sizeof(FragmentUniforms));
+  }
 }
 
 void GltfScene::Update(float delta) {
-  model_rotation_angles_ += kRotationSpeeds * delta;
+  yaw_radians_ = std::fmod(yaw_radians_ + (kYawSpeed * delta), kTwoPi);
+  tilt_phase_radians_ =
+      std::fmod(tilt_phase_radians_ + (kTiltSpeed * delta), kTwoPi);
 }
 
 void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
-                     const Camera& camera) {
+                     const Camera& camera, std::size_t frame_index) {
   const simd::float4x4 from_origin_matrix =
       MakeTranslationMatrix(model_.bounds_center);
   const simd::float4x4 to_origin_matrix =
       MakeTranslationMatrix(-model_.bounds_center);
 
+  const float tilt_radians =
+      kTiltAmplitudeRadians * std::sin(tilt_phase_radians_);
   const simd::float4x4 delta_rotation_matrix =
-      (MakeXRotationMatrix(model_rotation_angles_.x) *
-       MakeYRotationMatrix(model_rotation_angles_.y) *
-       MakeZRotationMatrix(model_rotation_angles_.z));
+      MakeXRotationMatrix(tilt_radians) * MakeYRotationMatrix(yaw_radians_);
 
   const simd::float4x4 model_world_matrix =
       from_origin_matrix * delta_rotation_matrix * to_origin_matrix *
@@ -115,11 +130,16 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
   command_encoder->setVertexBuffer(normals_buffer_.get(), 0,
                                    kBufferIndexNormals);
 
-  command_encoder->setVertexBytes(&uniforms, sizeof(uniforms),
-                                  kBufferIndexUniforms);
-  command_encoder->setFragmentBytes(&fragment_uniforms,
-                                    sizeof(fragment_uniforms),
-                                    kBufferIndexFragmentUniforms);
+  MTL::Buffer* uniform_buffer = uniform_buffers_[frame_index].get();
+  MTL::Buffer* fragment_uniform_buffer =
+      fragment_uniform_buffers_[frame_index].get();
+  std::memcpy(uniform_buffer->contents(), &uniforms, sizeof(uniforms));
+  std::memcpy(fragment_uniform_buffer->contents(), &fragment_uniforms,
+              sizeof(fragment_uniforms));
+
+  command_encoder->setVertexBuffer(uniform_buffer, 0, kBufferIndexUniforms);
+  command_encoder->setFragmentBuffer(fragment_uniform_buffer, 0,
+                                     kBufferIndexFragmentUniforms);
 
   command_encoder->drawIndexedPrimitives(
       MTL::PrimitiveType::PrimitiveTypeTriangle,

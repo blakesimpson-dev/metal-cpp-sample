@@ -73,12 +73,3 @@ simd::float4x4 MakeYRotationMatrix(float angle_radians) {
                         simd::float4{sin_angle, 0.0F, cos_angle, 0.0F},
                         simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
 }
-
-simd::float4x4 MakeZRotationMatrix(float angle_radians) {
-  const float cos_angle = std::cos(angle_radians);
-  const float sin_angle = std::sin(angle_radians);
-  return simd::float4x4{simd::float4{cos_angle, sin_angle, 0.0F, 0.0F},
-                        simd::float4{-sin_angle, cos_angle, 0.0F, 0.0F},
-                        simd::float4{0.0F, 0.0F, 1.0F, 0.0F},
-                        simd::float4{0.0F, 0.0F, 0.0F, 1.0F}};
-}
