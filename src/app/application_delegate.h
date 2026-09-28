@@ -1,9 +1,10 @@
-#pragma once
 
-#include <AppKit/AppKit.hpp>
-#include <memory>
+#ifndef METAL_CPP_SAMPLE_APP_APPLICATION_DELEGATE_H_
+#define METAL_CPP_SAMPLE_APP_APPLICATION_DELEGATE_H_
 
 #include "platform/metal_ptr.h"
+#include <AppKit/AppKit.hpp>
+#include <memory>
 
 class Scene;
 class ViewDelegate;
@@ -39,3 +40,5 @@ class ApplicationDelegate : public NS::ApplicationDelegate {
   Scene* scene_;
   std::unique_ptr<ViewDelegate> view_delegate_;
 };
+
+#endif  // METAL_CPP_SAMPLE_APP_APPLICATION_DELEGATE_H_

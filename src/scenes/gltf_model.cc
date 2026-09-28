@@ -1,13 +1,12 @@
 #include "gltf_model.h"
-
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <cstdint>
 #include <fastgltf/core.hpp>
 #include <fastgltf/math.hpp>
 #include <fastgltf/tools.hpp>
 #include <fastgltf/types.hpp>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <limits>
 #include <optional>
@@ -41,8 +40,10 @@ MeshInstance FindMeshInstance(fastgltf::Asset& asset) {
           assert(!mesh_instance.has_value() &&
                  "Scene node traversal failed: More than one mesh instance "
                  "found.");
-          mesh_instance = MeshInstance{.mesh_index = *node.meshIndex,
-                                       .world_matrix = matrix};
+          mesh_instance = MeshInstance{
+              .mesh_index = *node.meshIndex,
+              .world_matrix = matrix,
+          };
         }
       });
 
@@ -86,6 +87,7 @@ std::vector<std::uint32_t> ReadIndices(const fastgltf::Asset& asset,
 
 simd::float4x4 ToSimdFloat4x4(const fastgltf::math::fmat4x4& matrix) {
   simd::float4x4 out;
+  // NOLINTNEXTLINE(modernize-loop-convert): col indexes both matrices.
   for (int col = 0; col < 4; ++col) {
     for (int row = 0; row < 4; ++row) {
       out.columns[col][row] = matrix[col][row];
@@ -104,13 +106,17 @@ Bounds ComputeBounds(const std::vector<simd::float3>& positions,
                      const simd::float4x4& model_matrix) {
   assert(!positions.empty() && "Bounds calculation failed: No position data.");
 
-  simd::float3 min_corner{std::numeric_limits<float>::max(),
-                          std::numeric_limits<float>::max(),
-                          std::numeric_limits<float>::max()};
+  simd::float3 min_corner{
+      std::numeric_limits<float>::max(),
+      std::numeric_limits<float>::max(),
+      std::numeric_limits<float>::max(),
+  };
 
-  simd::float3 max_corner{std::numeric_limits<float>::lowest(),
-                          std::numeric_limits<float>::lowest(),
-                          std::numeric_limits<float>::lowest()};
+  simd::float3 max_corner{
+      std::numeric_limits<float>::lowest(),
+      std::numeric_limits<float>::lowest(),
+      std::numeric_limits<float>::lowest(),
+  };
 
   for (const simd::float3& position : positions) {
     const simd::float3 world_position = TransformPoint(model_matrix, position);

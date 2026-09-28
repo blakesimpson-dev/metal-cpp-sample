@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_APP_VIEW_DELEGATE_H_
+#define METAL_CPP_SAMPLE_APP_VIEW_DELEGATE_H_
 
 #include <MetalKit/MetalKit.hpp>
 #include <memory>
@@ -19,3 +21,5 @@ class ViewDelegate : public MTK::ViewDelegate {
  private:
   std::unique_ptr<MetalRenderer> renderer_;
 };
+
+#endif  // METAL_CPP_SAMPLE_APP_VIEW_DELEGATE_H_

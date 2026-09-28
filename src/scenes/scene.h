@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_SCENES_SCENE_H_
+#define METAL_CPP_SAMPLE_SCENES_SCENE_H_
 
 #include <Metal/Metal.hpp>
 
@@ -17,3 +19,5 @@ class Scene {
     return MTL::ClearColor::Make(0.0, 0.0, 0.0, 1.0);
   }
 };
+
+#endif  // METAL_CPP_SAMPLE_SCENES_SCENE_H_

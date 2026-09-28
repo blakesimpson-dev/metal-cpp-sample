@@ -1,11 +1,4 @@
 #include "scenes/gltf_scene.h"
-
-#include <cmath>
-#include <cstdint>
-#include <filesystem>
-#include <iostream>
-#include <numbers>
-
 #include "platform/executable_path.h"
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
@@ -13,18 +6,20 @@
 #include "renderer/metal_utils.h"
 #include "scenes/gltf_model.h"
 #include "shaders/shader_types.h"
+#include <cmath>
+#include <cstdint>
+#include <filesystem>
+#include <iostream>
+#include <numbers>
 
 namespace {
 constexpr const char* kModelSubdirectoryPath = "assets/exalted_orb";
 constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
-
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
 const simd::float3 kRotationSpeeds{0.25F, 0.125F, 0.09375F};
-
-const simd::float3 kLightDirection{
-    simd::normalize(simd::float3{-0.625F, 0.625F, 0.375F})};
+const simd::float3 kLightDirection{-0.625F, 0.625F, 0.375F};
 const simd::float3 kSkyColor{0.7F, 0.5F, 0.22F};
 const simd::float3 kGroundColor{0.08F, 0.01F, 0.006F};
 constexpr float kAmbientIntensity = 0.0375F;
@@ -38,8 +33,6 @@ MTL::ClearColor DisplayClearColor(double red, double green, double blue) {
   return MTL::ClearColor::Make(std::pow(red, 2.2), std::pow(green, 2.2),
                                std::pow(blue, 2.2), 1.0);
 }
-
-const MTL::ClearColor kSceneClearColor = DisplayClearColor(0.09, 0.055, 0.035);
 }  // namespace
 
 void GltfScene::Load(MTL::Device* device) {
@@ -94,7 +87,8 @@ void GltfScene::Draw(MTL::RenderCommandEncoder* command_encoder,
       .mvp =
           camera.ProjectionMatrix() * camera.ViewMatrix() * model_world_matrix,
       .world_matrix = model_world_matrix,
-      .normal_matrix = MakeNormalMatrix(model_world_matrix)};
+      .normal_matrix = MakeNormalMatrix(model_world_matrix),
+  };
 
   const FragmentUniforms fragment_uniforms{
       .base_color = model_.base_color,
@@ -145,4 +139,6 @@ void GltfScene::ConfigureCamera(Camera& camera) const {
                         fit_distance + (2.0F * model_.bounds_radius));
 }
 
-MTL::ClearColor GltfScene::SceneClearColor() const { return kSceneClearColor; }
+MTL::ClearColor GltfScene::SceneClearColor() const {
+  return DisplayClearColor(0.09, 0.055, 0.035);
+}

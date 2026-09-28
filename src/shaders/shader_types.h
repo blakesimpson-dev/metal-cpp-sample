@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_SHADERS_SHADER_TYPES_H_
+#define METAL_CPP_SAMPLE_SHADERS_SHADER_TYPES_H_
 
 #include <simd/simd.h>
 
@@ -30,3 +32,5 @@ struct FragmentUniforms {
   float bump_strength;
   float bump_frequency;
 };
+
+#endif  // METAL_CPP_SAMPLE_SHADERS_SHADER_TYPES_H_

@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_RENDERER_MATH_UTILS_H_
+#define METAL_CPP_SAMPLE_RENDERER_MATH_UTILS_H_
 
 #include <simd/simd.h>
 
@@ -19,3 +21,5 @@ simd::float4x4 MakeXRotationMatrix(float angle_radians);
 simd::float4x4 MakeYRotationMatrix(float angle_radians);
 
 simd::float4x4 MakeZRotationMatrix(float angle_radians);
+
+#endif  // METAL_CPP_SAMPLE_RENDERER_MATH_UTILS_H_

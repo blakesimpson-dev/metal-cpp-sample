@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_PLATFORM_METAL_PTR_H_
+#define METAL_CPP_SAMPLE_PLATFORM_METAL_PTR_H_
 
 #include <AppKit/AppKit.hpp>
 #include <Foundation/Foundation.hpp>
@@ -27,3 +29,5 @@ MetalPtr<T> CreateMetalObject(Args&&... args) {
 inline NS::String* ToNsString(const char* text) {
   return NS::String::string(text, NS::StringEncoding::UTF8StringEncoding);
 }
+
+#endif  // METAL_CPP_SAMPLE_PLATFORM_METAL_PTR_H_

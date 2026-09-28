@@ -1,11 +1,12 @@
-#pragma once
 
-#include <Metal/Metal.hpp>
-#include <chrono>
+#ifndef METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_
+#define METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_
 
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
 #include "renderer/renderer.h"
+#include <Metal/Metal.hpp>
+#include <chrono>
 
 class Scene;
 
@@ -43,3 +44,5 @@ class MetalRenderer : public Renderer {
 
   std::chrono::steady_clock::time_point last_frame_time_;
 };
+
+#endif  // METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_

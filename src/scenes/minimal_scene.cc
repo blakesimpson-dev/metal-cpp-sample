@@ -1,14 +1,11 @@
 #include "scenes/minimal_scene.h"
-
-#include <simd/simd.h>
-
-#include <array>
-#include <iterator>
-
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
 #include "renderer/metal_utils.h"
 #include "shaders/shader_types.h"
+#include <simd/simd.h>
+#include <array>
+#include <iterator>
 
 namespace {
 constexpr const char* kVertexShaderFunctionName = "VertexMain";
@@ -19,15 +16,19 @@ void MinimalScene::Load(MTL::Device* device) {
   pipeline_state_ = CreateRenderPipelineState(device, kVertexShaderFunctionName,
                                               kFragmentShaderFunctionName);
 
-  const std::array positions{simd::float3{-0.675F, 0.675F, 0.0F},
-                             simd::float3{0.0F, -0.675F, 0.0F},
-                             simd::float3{+0.675F, 0.675F, 0.0F}};
+  const std::array positions{
+      simd::float3{-0.675F, 0.675F, 0.0F},
+      simd::float3{0.0F, -0.675F, 0.0F},
+      simd::float3{+0.675F, 0.675F, 0.0F},
+  };
 
   vertex_count_ = std::size(positions);
 
-  const std::array colors{simd::float3{1.0F, 0.0F, 0.0F},
-                          simd::float3{0.0F, 1.0F, 0.0F},
-                          simd::float3{0.0F, 0.0F, 1.0F}};
+  const std::array colors{
+      simd::float3{1.0F, 0.0F, 0.0F},
+      simd::float3{0.0F, 1.0F, 0.0F},
+      simd::float3{0.0F, 0.0F, 1.0F},
+  };
 
   positions_buffer_ = CreateBuffer(device, positions.data(),
                                    positions.size() * sizeof(simd::float3));

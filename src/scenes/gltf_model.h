@@ -1,7 +1,8 @@
-#pragma once
+
+#ifndef METAL_CPP_SAMPLE_SCENES_GLTF_MODEL_H_
+#define METAL_CPP_SAMPLE_SCENES_GLTF_MODEL_H_
 
 #include <simd/simd.h>
-
 #include <cstdint>
 #include <filesystem>
 #include <vector>
@@ -20,3 +21,5 @@ struct GltfModel {
 };
 
 GltfModel LoadGltfModel(const std::filesystem::path& model_file_path);
+
+#endif  // METAL_CPP_SAMPLE_SCENES_GLTF_MODEL_H_

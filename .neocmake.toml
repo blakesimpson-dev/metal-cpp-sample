@@ -1,3 +1,0 @@
-[format]
-program = "gersemi"
-args = ["--indent", "2", "-"]
