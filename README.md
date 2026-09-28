@@ -18,7 +18,6 @@ lighting and procedural bump mapping.
 - **glTF:** 2.0 via fastgltf (mesh, normals, material factors)
 - **Camera:** perspective, framed from the model's bounding sphere
 - **Frames in flight:** triple-buffered uniforms, semaphore paced
-  ([details](#frames-in-flight))
 - **Lighting:** Lambert diffuse, Blinn-Phong specular, Fresnel and procedural
   environment reflection
 - **Bump mapping:** procedural noise, surface gradient method, no UVs
