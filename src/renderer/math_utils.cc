@@ -1,4 +1,5 @@
 #include "renderer/math_utils.h"
+
 #include <cmath>
 
 // Based on approach from: https://learnopengl.com/Getting-started/Camera

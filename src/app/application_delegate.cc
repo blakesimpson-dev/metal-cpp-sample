@@ -1,13 +1,17 @@
 #include "app/application_delegate.h"
-#include "app/view_delegate.h"
-#include "platform/metal_ptr.h"
-#include "renderer/metal_renderer.h"
+
 #include <CoreFoundation/CFCGTypes.h>
-#include <Metal/Metal.hpp>
-#include <MetalKit/MetalKit.hpp>
+
 #include <cassert>
 #include <iostream>
 #include <memory>
+
+#include <Metal/Metal.hpp>
+#include <MetalKit/MetalKit.hpp>
+
+#include "app/view_delegate.h"
+#include "platform/metal_ptr.h"
+#include "renderer/metal_renderer.h"
 
 ApplicationDelegate::ApplicationDelegate(Scene* scene) : scene_(scene) {}
 

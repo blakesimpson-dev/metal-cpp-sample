@@ -1,11 +1,13 @@
 #include "renderer/metal_utils.h"
-#include "platform/executable_path.h"
-#include "platform/metal_ptr.h"
-#include "renderer/metal_renderer.h"
+
 #include <cassert>
 #include <cstddef>
 #include <iostream>
 #include <string>
+
+#include "platform/executable_path.h"
+#include "platform/metal_ptr.h"
+#include "renderer/metal_renderer.h"
 
 using NS::TransferPtr;
 

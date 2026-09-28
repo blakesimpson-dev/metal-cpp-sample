@@ -5,20 +5,16 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 QualifierAlignment: Left
 
-IncludeBlocks: Merge
+IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^<[A-Za-z0-9_]*\.h>$'
-    Priority: 10000
-  - Regex: '^<sys/[A-Za-z0-9_]*\.h>$'
-    Priority: 10000
-  - Regex: '^\"'
-    Priority: 1500
-  - Regex: "^<.*/.*"
-    Priority: 4000
-  - Regex: "^<.*.hpp>"
-    Priority: 4000
-  - Regex: "^<[^/]*>"
-    Priority: 5000
+  - Regex: '^<[A-Za-z0-9_/]+\.h>$'
+    Priority: 1
+  - Regex: "^<[A-Za-z0-9_]+>$"
+    Priority: 2
+  - Regex: "^<"
+    Priority: 3
+  - Regex: '^"'
+    Priority: 4
 
 RawStringFormats:
   - Language: TextProto
