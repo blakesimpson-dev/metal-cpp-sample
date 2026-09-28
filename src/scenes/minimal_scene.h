@@ -1,11 +1,12 @@
-
 #ifndef METAL_CPP_SAMPLE_SCENES_MINIMAL_SCENE_H_
 #define METAL_CPP_SAMPLE_SCENES_MINIMAL_SCENE_H_
 
+#include <cstddef>
+
+#include <Metal/Metal.hpp>
+
 #include "platform/metal_ptr.h"
 #include "scenes/scene.h"
-#include <Metal/Metal.hpp>
-#include <cstddef>
 
 class MinimalScene : public Scene {
  public:
@@ -18,7 +19,7 @@ class MinimalScene : public Scene {
   void Update(float delta) override;
 
   void Draw(MTL::RenderCommandEncoder* command_encoder,
-            const Camera& /*camera*/) override;
+            const Camera& /*camera*/, std::size_t frame_index) override;
 
  private:
   PipelineStatePtr pipeline_state_;

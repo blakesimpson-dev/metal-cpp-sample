@@ -1,10 +1,16 @@
 #include "renderer/metal_renderer.h"
-#include "platform/metal_ptr.h"
-#include "scenes/scene.h"
+
 #include <CoreFoundation/CFCGTypes.h>
-#include <MetalKit/MetalKit.hpp>
+
 #include <cassert>
 #include <chrono>
+#include <cstddef>
+
+#include <MetalKit/MetalKit.hpp>
+
+#include "platform/metal_ptr.h"
+#include "renderer/frames_in_flight.h"
+#include "scenes/scene.h"
 
 MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
     : device_(NS::RetainPtr(device)),
@@ -26,6 +32,12 @@ MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
   last_frame_time_ = std::chrono::steady_clock::now();
 }
 
+MetalRenderer::~MetalRenderer() {
+  for (std::size_t i = 0; i < kMaxFramesInFlight; i++) {
+    frame_semaphore_.acquire();
+  }
+}
+
 void MetalRenderer::Draw() {
   const std::chrono::steady_clock::time_point now =
       std::chrono::steady_clock::now();
@@ -37,12 +49,18 @@ void MetalRenderer::Draw() {
 
   AutoreleasePoolPtr pool = CreateMetalObject<NS::AutoreleasePool>();
 
+  frame_semaphore_.acquire();
+  frame_index_ = (frame_index_ + 1) % kMaxFramesInFlight;
+
   MTL::CommandBuffer* command_buffer = command_queue_->commandBuffer();
+  command_buffer->addCompletedHandler(
+      [this](MTL::CommandBuffer* /*buffer*/) { frame_semaphore_.release(); });
+
   MTL::RenderPassDescriptor* render_pass = view_->currentRenderPassDescriptor();
   MTL::RenderCommandEncoder* command_encoder =
       command_buffer->renderCommandEncoder(render_pass);
 
-  scene_->Draw(command_encoder, camera_);
+  scene_->Draw(command_encoder, camera_, frame_index_);
 
   command_encoder->endEncoding();
   command_buffer->presentDrawable(view_->currentDrawable());

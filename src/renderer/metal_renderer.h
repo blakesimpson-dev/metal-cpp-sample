@@ -1,12 +1,16 @@
-
 #ifndef METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_
 #define METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_
 
+#include <chrono>
+#include <cstddef>
+#include <semaphore>
+
+#include <Metal/Metal.hpp>
+
 #include "platform/metal_ptr.h"
 #include "renderer/camera.h"
+#include "renderer/frames_in_flight.h"
 #include "renderer/renderer.h"
-#include <Metal/Metal.hpp>
-#include <chrono>
 
 class Scene;
 
@@ -15,6 +19,7 @@ class MetalRenderer : public Renderer {
   MetalRenderer(const MetalRenderer&) = delete;
   MetalRenderer& operator=(const MetalRenderer&) = delete;
   MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene);
+  ~MetalRenderer() override;
 
   static constexpr MTL::PixelFormat kColorPixelFormat =
       MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB;
@@ -43,6 +48,9 @@ class MetalRenderer : public Renderer {
   Camera camera_;
 
   std::chrono::steady_clock::time_point last_frame_time_;
+  std::counting_semaphore<kMaxFramesInFlight> frame_semaphore_{
+      kMaxFramesInFlight};
+  std::size_t frame_index_ = 0;
 };
 
 #endif  // METAL_CPP_SAMPLE_RENDERER_METAL_RENDERER_H_
