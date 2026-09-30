@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.26)
 
 set(CMAKE_OSX_SYSROOT macosx CACHE STRING "macOS SDK")
+set(CMAKE_OSX_DEPLOYMENT_TARGET 14.0 CACHE STRING "Minimum macOS version")
+set(CMAKE_OSX_ARCHITECTURES arm64 CACHE STRING "Target architectures")
 
 project(metal-cpp-sample)
 set(CMAKE_CXX_STANDARD 20)
@@ -20,7 +22,10 @@ foreach(shader_source ${shader_sources})
   set(out "${CMAKE_BINARY_DIR}/${shader_name}.air")
   add_custom_command(
     OUTPUT ${out}
-    COMMAND xcrun -sdk macosx metal -c ${shader_source} -o ${out}
+    COMMAND
+      xcrun -sdk macosx metal
+      -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET} -c ${shader_source} -o
+      ${out}
     DEPENDS ${shader_source} ${CMAKE_SOURCE_DIR}/src/shaders/shader_types.h
   )
   list(APPEND air_out ${out})

@@ -26,8 +26,8 @@ lighting and procedural bump mapping.
 
 ## Build and run
 
-Requires macOS, Xcode (with the Metal toolchain) and CMake 3.26+. Tested with
-Xcode 27.0 on macOS 27.0, CMake 4.4.3 and Ninja.
+Requires Apple Clang (GCC / MSVC are not supported), Xcode w/ Metal toolchain,
+and CMake 3.26+. Tested on macOS 27.0, CMake 4.4.3 and Ninja.
 
 ```bash
 git clone --recursive https://github.com/blakesimpson-dev/metal-cpp-sample.git
@@ -37,10 +37,14 @@ cmake --build build
 ./build/metal-cpp-sample [--scene=gltf|minimal] [--msaa=on|off]
 ```
 
-| Option     | Values                  | Default |
-| ---------- | ----------------------- | ------- |
-| `--scene=` | `gltf`, `minimal`       | `gltf`  |
-| `--msaa=`  | `on` (4 samples), `off` | `on`    |
+### Download
+
+Alternatively, you may [download the sample](LINK). Run the following on your
+machine after unzipping (Gatekeeper can be problematic):
+
+```bash
+xattr -dr com.apple.quarantine metal-cpp-sample-v1.0.0-macos-arm64
+```
 
 ## Layout
 
