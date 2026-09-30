@@ -52,19 +52,26 @@ void MetalRenderer::Draw() {
   AutoreleasePoolPtr pool = CreateMetalObject<NS::AutoreleasePool>();
 
   frame_semaphore_.acquire();
+
+  MTL::RenderPassDescriptor* render_pass = view_->currentRenderPassDescriptor();
+  CA::MetalDrawable* drawable = view_->currentDrawable();
+  if (render_pass == nullptr || drawable == nullptr) {
+    frame_semaphore_.release();
+    return;
+  }
+
   frame_index_ = (frame_index_ + 1) % kMaxFramesInFlight;
 
   MTL::CommandBuffer* command_buffer = command_queue_->commandBuffer();
   command_buffer->addCompletedHandler(
       [this](MTL::CommandBuffer* /*buffer*/) { frame_semaphore_.release(); });
 
-  MTL::RenderPassDescriptor* render_pass = view_->currentRenderPassDescriptor();
   MTL::RenderCommandEncoder* command_encoder =
       command_buffer->renderCommandEncoder(render_pass);
 
   scene_->Draw(command_encoder, camera_, frame_index_);
 
   command_encoder->endEncoding();
-  command_buffer->presentDrawable(view_->currentDrawable());
+  command_buffer->presentDrawable(drawable);
   command_buffer->commit();
 }
