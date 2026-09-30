@@ -1,11 +1,11 @@
 #include "renderer/metal_utils.h"
 
-#include <cassert>
 #include <cstddef>
 #include <iostream>
 #include <string>
 
 #include "platform/executable_path.h"
+#include "platform/fatal_error.h"
 #include "platform/metal_ptr.h"
 #include "renderer/metal_renderer.h"
 
@@ -31,20 +31,19 @@ PipelineStatePtr CreateRenderPipelineState(MTL::Device* device,
   if (!shader_library && shader_library_error != nullptr) {
     PrintMetalError(*shader_library_error);
   }
-  assert(
-      shader_library &&
+  Check(
+      shader_library.get() != nullptr,
       "Shader library load failed: Could not create it from shaders.metallib.");
 
   MetalPtr<MTL::Function> vertex_main = TransferPtr(
       shader_library->newFunction(ToNsString(vertex_function_name)));
-  assert(vertex_main &&
-         "Vertex function lookup failed: Name not found in shaders.metallib.");
+  Check(vertex_main.get() != nullptr,
+        "Vertex function lookup failed: Name not found in shaders.metallib.");
 
   MetalPtr<MTL::Function> fragment_main = TransferPtr(
       shader_library->newFunction(ToNsString(fragment_function_name)));
-  assert(
-      fragment_main &&
-      "Fragment function lookup failed: Name not found in shaders.metallib.");
+  Check(fragment_main.get() != nullptr,
+        "Fragment function lookup failed: Name not found in shaders.metallib.");
 
   MetalPtr<MTL::RenderPipelineDescriptor> pipeline_descriptor =
       CreateMetalObject<MTL::RenderPipelineDescriptor>();
@@ -63,8 +62,8 @@ PipelineStatePtr CreateRenderPipelineState(MTL::Device* device,
   if (!pipeline_state && pipeline_state_error != nullptr) {
     PrintMetalError(*pipeline_state_error);
   }
-  assert(pipeline_state &&
-         "Pipeline state creation failed: Metal rejected the descriptor.");
+  Check(pipeline_state.get() != nullptr,
+        "Pipeline state creation failed: Metal rejected the descriptor.");
 
   return pipeline_state;
 }
@@ -76,8 +75,8 @@ BufferPtr CreateBuffer(MTL::Device* device, const void* data,
       device->hasUnifiedMemory() ? MTL::ResourceStorageModeShared
                                  : MTL::ResourceStorageModeManaged;
   MTL::Buffer* buffer = device->newBuffer(data, length, storage_mode);
-  assert(buffer != nullptr &&
-         "Buffer creation failed: Metal could not allocate the buffer.");
+  Check(buffer != nullptr,
+        "Buffer creation failed: Metal could not allocate the buffer.");
 
   return TransferPtr(buffer);
 }
@@ -85,8 +84,8 @@ BufferPtr CreateBuffer(MTL::Device* device, const void* data,
 BufferPtr CreateSharedBuffer(MTL::Device* device, std::size_t length) {
   MTL::Buffer* buffer =
       device->newBuffer(length, MTL::ResourceStorageModeShared);
-  assert(buffer != nullptr &&
-         "Buffer creation failed: Metal could not allocate the buffer.");
+  Check(buffer != nullptr,
+        "Buffer creation failed: Metal could not allocate the buffer.");
 
   return TransferPtr(buffer);
 }
@@ -95,16 +94,16 @@ DepthStencilStatePtr CreateDepthStencilState(MTL::Device* device) {
   MetalPtr<MTL::DepthStencilDescriptor> depth_stencil_descriptor =
       CreateMetalObject<MTL::DepthStencilDescriptor>();
 
-  assert(depth_stencil_descriptor &&
-         "Depth stencil creation failed: Could not initialize descriptor.");
+  Check(depth_stencil_descriptor.get() != nullptr,
+        "Depth stencil creation failed: Could not initialize descriptor.");
 
   depth_stencil_descriptor->setDepthCompareFunction(MTL::CompareFunctionLess);
   depth_stencil_descriptor->setDepthWriteEnabled(true);
 
   MTL::DepthStencilState* depth_stencil_state =
       device->newDepthStencilState(depth_stencil_descriptor.get());
-  assert(depth_stencil_state &&
-         "Depth stencil creation failed: Could not initialize state.");
+  Check(depth_stencil_state != nullptr,
+        "Depth stencil creation failed: Could not initialize state.");
 
   return TransferPtr(depth_stencil_state);
 }
