@@ -8,6 +8,7 @@
 
 #include <MetalKit/MetalKit.hpp>
 
+#include "platform/fatal_error.h"
 #include "platform/metal_ptr.h"
 #include "renderer/frames_in_flight.h"
 #include "scenes/scene.h"
@@ -17,14 +18,15 @@ MetalRenderer::MetalRenderer(MTL::Device* device, MTK::View* view, Scene* scene)
       command_queue_(NS::TransferPtr(device->newCommandQueue())),
       view_(view),
       scene_(scene) {
-  assert(command_queue_ &&
-         "Command queue creation failed: Could not initialize.");
-  assert(device_->supportsTextureSampleCount(MetalRenderer::SampleCount()) &&
-         "Sample count check failed: Device does not support this MSAA level.");
+  Check(command_queue_.get() != nullptr,
+        "Command queue creation failed: Could not initialize.");
+  Check(device_->supportsTextureSampleCount(MetalRenderer::SampleCount()),
+        "Sample count check failed: Device does not support this MSAA level.");
 
   scene_->Load(device_.get());
   scene_->ConfigureCamera(camera_);
   const CGSize size = view_->drawableSize();
+  // assert over Check here is intentional
   assert(size.height > 0.0 && "Camera setup failed: View has no height.");
 
   camera_.SetAspectRatio(static_cast<float>(size.width / size.height));

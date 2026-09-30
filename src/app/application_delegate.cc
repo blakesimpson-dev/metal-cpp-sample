@@ -2,7 +2,6 @@
 
 #include <CoreFoundation/CFCGTypes.h>
 
-#include <cassert>
 #include <iostream>
 #include <memory>
 
@@ -10,6 +9,7 @@
 #include <MetalKit/MetalKit.hpp>
 
 #include "app/view_delegate.h"
+#include "platform/fatal_error.h"
 #include "platform/metal_ptr.h"
 #include "renderer/metal_renderer.h"
 
@@ -30,7 +30,8 @@ void ApplicationDelegate::applicationWillFinishLaunching(
 void ApplicationDelegate::applicationDidFinishLaunching(
     NS::Notification* /*notification*/) {
   device_ = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
-  assert(device_ && "Device creation failed: No system default device.");
+  Check(device_.get() != nullptr,
+        "Device creation failed: No system default device.");
 
   const CGRect content_rect{
       .origin = {.x = kWindowOriginX, .y = kWindowOriginY},
@@ -44,10 +45,11 @@ void ApplicationDelegate::applicationDidFinishLaunching(
   window_ =
       CreateMetalObject<NS::Window>(content_rect, window_style_mask,
                                     window_backing, defer_onscreen_allocation);
-  assert(window_ && "Window creation failed: Could not initialize.");
+  Check(window_.get() != nullptr,
+        "Window creation failed: Could not initialize.");
 
   view_ = CreateMetalObject<MTK::View>(content_rect, device_.get());
-  assert(view_ && "View creation failed: Could not initialize.");
+  Check(view_.get() != nullptr, "View creation failed: Could not initialize.");
 
   view_->setColorPixelFormat(MetalRenderer::kColorPixelFormat);
   view_->setDepthStencilPixelFormat(MetalRenderer::kDepthPixelFormat);
