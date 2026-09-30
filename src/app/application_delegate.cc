@@ -38,7 +38,8 @@ void ApplicationDelegate::applicationDidFinishLaunching(
       .size = {.width = kWindowWidth, .height = kWindowHeight},
   };
   const NS::WindowStyleMask window_style_mask =
-      NS::WindowStyleMaskTitled | NS::WindowStyleMaskClosable;
+      NS::WindowStyleMaskTitled | NS::WindowStyleMaskClosable |
+      NS::WindowStyleMaskMiniaturizable;
   const NS::BackingStoreType window_backing = NS::BackingStoreBuffered;
   const bool defer_onscreen_allocation = false;
 
