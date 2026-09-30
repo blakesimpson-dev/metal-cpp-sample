@@ -1,28 +1,7 @@
 [
-    {
-        "label": "Lint",
-        "command": "run-clang-tidy -quiet -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
-        "cwd": "$ZED_WORKTREE_ROOT",
-        "reveal": "always",
-    },
-    {
-        "label": "Lint: fix",
-        "command": "run-clang-tidy -quiet -fix -format -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
-        "cwd": "$ZED_WORKTREE_ROOT",
-        "reveal": "always",
-    },
-    {
-        "label": "Format",
-        "command": "git ls-files 'src/*.cc' 'src/*.h' 'src/*.metal' | xargs clang-format -i && gersemi -i CMakeLists.txt",
-        "cwd": "$ZED_WORKTREE_ROOT",
-        "reveal": "always",
-    },
-    {
-        "label": "Format: check",
-        "command": "git ls-files 'src/*.cc' 'src/*.h' 'src/*.metal' | xargs clang-format --dry-run --Werror && gersemi --check CMakeLists.txt",
-        "cwd": "$ZED_WORKTREE_ROOT",
-        "reveal": "always",
-    },
+    //==========================================================================
+    // Configure and Build
+    //==========================================================================
     {
         "label": "CMake: Configure",
         "command": "cmake -S . -B build -G Ninja",
@@ -37,6 +16,39 @@
         "shell": "system",
         "reveal": "always",
     },
+    //==========================================================================
+    // Linting
+    //==========================================================================
+    {
+        "label": "Lint",
+        "command": "run-clang-tidy -quiet -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+    },
+    {
+        "label": "Lint: fix",
+        "command": "run-clang-tidy -quiet -fix -format -p build 'src/.*\\.cc$' 2>&1 | grep -E 'warning:|error:' ; test ${pipestatus[1]} -eq 0",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+    },
+    //==========================================================================
+    // Formatting
+    //==========================================================================
+    {
+        "label": "Format",
+        "command": "git ls-files 'src/*.cc' 'src/*.h' 'src/*.metal' | xargs clang-format -i && gersemi -i CMakeLists.txt",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+    },
+    {
+        "label": "Format: check",
+        "command": "git ls-files 'src/*.cc' 'src/*.h' 'src/*.metal' | xargs clang-format --dry-run --Werror && gersemi --check CMakeLists.txt",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+    },
+    //==========================================================================
+    // Runners
+    //==========================================================================
     {
         "label": "Run: Metal-cpp sample",
         "command": "./build/metal-cpp-sample",
