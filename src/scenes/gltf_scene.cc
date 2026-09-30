@@ -1,5 +1,6 @@
 #include "scenes/gltf_scene.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -23,6 +24,7 @@ constexpr const char* kModelFileName = "scene.gltf";
 constexpr const char* kVertexShaderFunctionName = "GltfVertexMain";
 constexpr const char* kFragmentShaderFunctionName = "GltfFragmentMain";
 constexpr float kFovYRadians = 45.0F * std::numbers::pi_v<float> / 180.0F;
+constexpr float kMinNearPlane = 0.01F;
 constexpr float kTwoPi = 2.0F * std::numbers::pi_v<float>;
 constexpr float kYawSpeed = 0.35F;
 constexpr float kTiltAmplitudeRadians =
@@ -154,9 +156,10 @@ void GltfScene::ConfigureCamera(Camera& camera) const {
       model_.bounds_center + simd::float3{0.0F, 0.0F, fit_distance};
 
   camera.SetLookAt(camera_position, model_.bounds_center);
-  camera.SetPerspective(kFovYRadians,
-                        fit_distance - (2.0F * model_.bounds_radius),
-                        fit_distance + (2.0F * model_.bounds_radius));
+  camera.SetPerspective(
+      kFovYRadians,
+      std::max(fit_distance - (2.0F * model_.bounds_radius), kMinNearPlane),
+      fit_distance + (2.0F * model_.bounds_radius));
 }
 
 MTL::ClearColor GltfScene::SceneClearColor() const {
