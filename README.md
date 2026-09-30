@@ -39,7 +39,7 @@ cmake --build build
 
 ### Download
 
-Alternatively, you may [download the sample](LINK). Run the following on your
+Alternatively, you may [download the sample](https://github.com/blakesimpson-dev/metal-cpp-sample/releases). Run the following on your
 machine after unzipping (Gatekeeper can be problematic):
 
 ```bash
